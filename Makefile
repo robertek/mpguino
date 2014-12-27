@@ -7,7 +7,8 @@ AVRDDUDE 		= /usr/bin/avrdude
 ### BOARD
 BOARD_TAG 		= atmega328
 
-### CXXFLAGS
+### CFLAGS
+CFLAGS_STD 		= -std=c11
 CXXFLAGS_STD 		= -std=c++11
 
 ### MONITOR
