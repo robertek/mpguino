@@ -1,205 +1,25 @@
-//
-// MPGuino - open source fuel consumption tracking system
-// GPL Software, mass production use rights reserved by opengauge.org
-// personal use is perfectly fine
-// no warranties expressed or implied
-
-// Special thanks to the good folks at ecomodder.com, ardunio.cc, avrfreaks.net, cadsoft.de, atmel.com,
-// and all the folks who donate their time and resources and share their experiences freely
-
-/* External connections:
-
-Legacy MPGuino hardware is defined as anything that MPGuino was originally designed to run on. This includes
-   Arduino Duemilanove, Arduino Uno, JellyBeanDriver board, meelis11 board, iDuino, and any other board based off the
-   original MPGuino schematic, that can be found at http://ecomodder.com/wiki/index.php/MPGuino
-
-Vehicle interface pins
-  legacy MPGuino hardware
-	injector sense open  PD2 (INT0)
-	injector sense close PD3 (INT1)
-	speed                PC0 (PCINT8)
-	(if configured) MAP  PC1 (ADC1)
-	(if configured) Baro PC2 (ADC2)
-
-  TinkerKit! LCD module
-	injector sense open
-	injector sense close
-	speed                PB1 (PCINT1)
-	(if configured) MAP  PF7 (ADC7)
-	(if configured) Baro PF6 (ADC6)
-
-  Arduino Mega 2560
-	injector sense open  PE4 (INT4)
-	injector sense close PE5 (INT5)
-	speed                PK0 (PCINT16)
-	(if configured) MAP  PF1 (ADC1)
-	(if configured) Baro PF2 (ADC2)
-
-          --------------------------------------------
-         |                 MAP SENSOR                 |
-         |                                            |
-         |                                            |
-         |   +5V             SIGNAL          MAP      |
-         |   SUPPLY          GROUND          SIGNAL   |
-         |     3               2               1      |
-          --------------------------------------------
-               o               o               o
-               |               |               |
-               |               |               |              R7 (JBD)
-               |               |               o----------------vvv--o PC1 - legacy MPGuino hardware
-               |               |               |                2.2k   PF1 - Arduino Mega 2560
-               |               |               |                       PF7 - TinkerKit! LCD module
-               o               o               o
-          --------------------------------------------
-         |   C1-27           C2-27           C2-23    |
-         |   +5V             SIGNAL          MAP      |
-         |   SUPPLY          GROUND          SIGNAL   |
-         |                                            |
-         |                  CHRYSLER                  |
-         |       NGC POWERTRAIN CONTROL MODULE        |
-          --------------------------------------------
-                 (older Chrysler PCMs similar)
-
-
-          --------------------------------------------
-         |                Baro SENSOR                 |
-         |         (use a spare MAP sensor)           |
-         |                                            |
-         |   +5V             SIGNAL          Baro     |
-         |   SUPPLY          GROUND          SIGNAL   |
-         |     3               2               1      |
-          --------------------------------------------
-               o               o               o
-               |               |               |
-               |               |               |              R6 (JBD)
-               |               |               o----------------vvv--o PC2 - legacy MPGuino hardware
-               |               |                                2.2k   PF2 - Arduino Mega 2560
-               |               |                                       PF6 - TinkerKit! LCD module
-               o               o
-          --------------------------------------------
-         |   C1-27           C2-27                    |
-         |   +5V             SIGNAL                   |
-         |   SUPPLY          GROUND                   |
-         |                                            |
-         |                  CHRYSLER                  |
-         |       NGC POWERTRAIN CONTROL MODULE        |
-          --------------------------------------------
-                 (older Chrysler PCMs similar)
-
-
-LCD Pins - Legacy
-  legacy MPGuino hardware
-	DIR        PD4
-	DB4        PD7
-	DB5        PB0
-	DB6        PB4
-	DB7        PB5
-	Enable     PD5
-	Contrast   PD6, controlled by PWM on OC0A
-	Brightness PB1, controlled by PWM on OC1A
-
-  TinkerKit! LCD module
-    RW         PF0
-	DIR        PF1
-	DB4        PF4
-	DB5        PD4
-	DB6        PD6
-	DB7        PB4
-	Enable     PE6
-	Contrast   PB5, controlled by PWM on OC1A
-	Brightness PB6, controlled by PWM on OC1B
-
-  Arduino Mega 2560
-	DIR        PA4
-	DB4        PA3
-	DB5        PA2
-	DB6        PA1
-	DB7        PA0
-	Enable     PA5
-	Contrast   PB7, controlled by PWM on OC0A
-	Brightness PB5, controlled by PWM on OC1A
-
-LCD Pins - Parallax Serial Interface
-  legacy MPGuino hardware
-	RX D1 (TXD)
-
-  Arduino Mega 2560
-    RX E1 (TXD0)
-
-Buttons - Legacy
-  legacy MPGuino hardware
-	left    PC3 (PCINT11)
-	middle  PC4 (PCINT12)
-	right   PC5 (PCINT13)
-
-  Arduino Mega 2560
-	left    PK3 (PCINT19)
-	middle  PK4 (PCINT20)
-	right   PK5 (PCINT21)
-
-Buttons - Multiplexed Analog (diagram courtesy of josemapiro)
-  legacy MPGuino hardware
-	left, middle, right, extra#1, extra#2 PC3 (ADC3)
-
-  TinkerKit! LCD module
-	left, middle, right, extra#1, extra#2 PF7 (ADC7)
-
-  Arduino Mega 2560
-	left, middle, right, extra#1, extra#2 PF3 (ADC3)
-
-
-             o---------------o---------------o---------------o---------------o--o GND
-        R2   |          R3   |          R4   |          R5   |          R6   |
-     o--vvv--o       o--VVV--o       o--vvv--o       o--vvv--o       o--vvv--o
-     |  2.2k         |  4.7k         |  10k          |  22k          |  47k
-     o               o               o               o               o
-      /               /               /               /               /
-     o left          o middle        o right         o Extra#1       o Extra#2
-     |               |               |               |               |
-     o---------------o---------------o---------------o---------------o--vvv--o--o 5V
-                                                                     | R1 1k
-                                                                     o----------o PC3 - legacy MPGuino hardware
-                                                                                  PF3 - Arduino Mega 2560
-                                                                                  PF7 - TinkerKit! LCD module
-
-Buttons - Parallax 5-position switch (diagram based on josemapiro efforts)
-          (or any 5-position switch module with 10k pullup resistors on their switches)
-  legacy MPGuino hardware
-	left, middle, right, extra#1, extra#2 PC3 (ADC3)
-
-  TinkerKit! LCD module
-	left, middle, right, extra#1, extra#2 PF7 (ADC7)
-
-  Arduino Mega 2560
-	left, middle, right, extra#1, extra#2 PF3 (ADC3)
-
-                                                                                  PF3 - Arduino Mega 2560
-                                                                                  PF7 - TinkerKit! LCD module
-                                                                     o----------o PC3 - legacy MPGuino hardware
-                                                                     | R1 1k
-     o---------------o---------------o---------------o---------------o--vvv--o--o 5V
-     |               |               |               |               |
-     |  left         | middle        |  right        | Extra#1       | Extra#2
-     |               |               |               |               |
-     |  R2           |  R3           |  R4           |  R5           |  R6
-     o--vvv--o       o--VVV--o       o--vvv--o       o--vvv--o       o--vvv--o
-        2.2k |          4.7k |          10k  |          22k  |          47k  |
-             |               |               |               |               |
-             |               |               |               |               |
-             o               o               o               o               o
-          -----------------------------------------------------------------------
-         |   4               7               2               6               3   |
-         |   LT              UP              RT             CTR              DN  |
-         |                                                                       |
-         |                                                                       |
-         |                  VCC             GND                                  |
-         |                   5               8                                   |
-          -----------------------------------------------------------------------
-                             o               o
-                             |               |
-                             o               o----------------------------------O GND
-                            N/C
-*/
+/*
+ * =============================================================================
+ *
+ *       Filename:  mpguino.cpp
+ *
+ *    Description:  MPGuino - open source fuel consumption tracking system
+ *
+ *        Version:  1.0
+ *        Created:  12/27/2014 09:43:50 PM
+ *       Compiler:  gcc
+ *
+ *        License:  gpl 2.0
+ *      Additions:  mass production use rights reserved by opengauge.org
+ *                  personal use is perfectly fine
+ *                  no warranties expressed or implied
+ *         Thanks:  Special thanks to the good folks at ecomodder.com, 
+ *                  ardunio.cc, avrfreaks.net, cadsoft.de, atmel.com, and all 
+ *                  the folks who donate their time and resources and share 
+ *                  their experiences freely
+ *
+ * =============================================================================
+ */
 
 /* Program overview
  set up timer hardware
@@ -222,171 +42,19 @@ Buttons - Parallax 5-position switch (diagram based on josemapiro efforts)
 
 */
 
-// if the below "#define"s are commented out, code will compile for an AtMega328-series processor
-//#define ArduinoMega2560 true
-//#define TinkerkitLCDmodule true
-
-// if the below #define is commented out, 16 MHz system clock will be assumed
-#define use20MHz true // force 20 MHz system clock values
-
-// only one of the below LCD options may be chosen - choosing more than one will cause a compilation error to occur
-// if TinkerkitLCDmodule is used, useLegacyLCD will automatically be used, and the below options will be ignored
-#define useLegacyLCD true
-//#define useParallaxLCD true
-
-// only one of the below button options may be chosen - choosing more than one will cause a compilation error to occur
-#define useLegacyButtons true
-//#define useAnalogMuxButtons true
-//#define useParallax5PositionSwitch true
-
-// the below options only work if useLegacyLCD is selected. If useLegacyLCD is not selected, the below options will not be inserted at all
-//#define useLegacyLCDinvertedBrightness true	// For alternate LCD backlight connections
-#define useLegacyLCDbuffered true				// Speed up LCD output
-
-// selectable options - all may be chosen independently of one another, save for serial data logging.
-// the serial data logging option will conflict with the Parallax LCD output option, if both are selected at the same time
-//#define blankScreenOnMessage true		// Completely blank display screen upon display of message
-#define trackIdleEOCdata true			// Ability to track engine idling and EOC modes
-#define useSerialPortDataLogging true		// Ability to output 5 basic parameters to a data logger or SD card
-#define useBufferedSerialPort true		// Speed up serial output
-#define useCalculatedFuelFactor true		// Ability to calculate that pesky us/gal (or L) factor from easily available published fuel injector data
-#define useWindowFilter true			// Smooths out "jumpy" instant FE figures that are caused by modern OBDII engine computers
-#define useBigFE true				// Show big fuel economy displays
-#define useBigDTE true				// Show big distance-to-empty displays
-#define useBigTTE true				// Show big time-to-empty displays
-#define useClock true				// Show system clock, and provide means to set it
-#define useSavedTrips true			// Ability to save current or tank trips to any one of 10 different trip slots in EEPROM
-#define useScreenEditor true			// Ability to change any of 8 existing trip data screens, with 4 configurable figures on each screen
-#define useBarFuelEconVsTime true		// Show Fuel Economy over Time bar graph
-#define useBarFuelEconVsSpeed true		// Show Fuel Economy vs Speed, Fuel Used vs Speed bar graphs
-#define useSpiffyBigChars true
-#define useFuelCost true			// Show fuel cost
-#define useChryslerMAPCorrection true		// Ability to perform on-the-fly fuel injector data correction for late-model Chrysler vehicles
-//#define useABresultViewer true			// Ability to graphically show current (B) versus stored (A) fuel consumption rates
-//#define useCoastDownCalculator true		// Ability to calculate C(rr) and C(d) from coastdown
-
-// program measurement and debugging tools
-#define useCPUreading true			// Show CPU loading and available RAM usage
-//#define useDebugReadings true
-//#define forceEEPROMsettingsInit true
-//#define useEEPROMviewer true			// Ability to directly examine EEPROM
-//#define useBenchMark true				// this is probably broken - last time I used it was in August 2013
-//#define useSerialDebugOutput true
-
-// SWEET64 configuration/debugging
-//#define useSWEET64trace true			// Ability to view real-time 64-bit calculations from SWEET64 kernel
-//#define useSWEET64multDiv true			// shift mul64 and div64 from native C++ to SWEET64 bytecode
-
-// these #defines are used to select various features to support the above choices
-// do not mess with them, or compilation errors will occur
-#ifdef TinkerkitLCDmodule
-#undef useParallaxLCD
-#define useLegacyLCD true
-#ifdef useLegacyButtons
-#undef useLegacyButtons
-#define useAnalogMuxButtons true
-#endif
-#endif
-
-#ifdef useClock
-#define useBigTimeDisplay true
-#endif
-
-#ifdef useBigTTE
-#define useBigTimeDisplay true
-#endif
-
-#ifdef useBigTimeDisplay
-#define useBigNumberDisplay true
-#endif
-
-#ifdef useBigDTE
-#define useBigNumberDisplay true
-#endif
-
-#ifdef useBigFE
-#define useBigNumberDisplay true
-#endif
-
-#ifdef useCalculatedFuelFactor
-#define useIsqrt true
-#endif
-
-#ifdef useChryslerMAPCorrection
-#define useIsqrt true
-#define useAnalogRead true
-#endif
-
-#ifdef useSerialPortDataLogging
-#define useSerialPort true
-#endif
-
-#ifdef useParallaxLCD
-#define useSerialPort true
-#endif
-
-#ifdef useAnalogMuxButtons
-#define useAnalogButtons true
-#endif
-
-#ifdef useParallax5PositionSwitch
-#define useAnalogButtons true
-#endif
-
-#ifdef useAnalogButtons
-#define useAnalogRead true
-#endif
-
-#ifdef useLegacyLCD
-#define useAnalogInterrupt true
-#endif
-
-#ifdef useAnalogRead
-#define useAnalogInterrupt true
-#endif
-
-#ifdef useSWEET64trace
-#define useSerialDebugOutput true
-#endif
-
-#ifdef useSerialDebugOutput
-#define useSerialPort true
-#endif
-
-#ifdef useBarFuelEconVsTime
-#define useBarGraph true
-#endif
-
-#ifdef useBarFuelEconVsSpeed
-#define useBarGraph true
-#endif
-
-#ifdef useCoastDownCalculator
-#define useVehicleMass true
-#endif
-
-#ifdef useBufferedSerialPort
-#define useBuffering true
-#endif
-
-#ifdef useLegacyLCDbuffered
-#define useBuffering true
-#endif
-
 #include <stdlib.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 
+#include "configure.h"
+
 #ifdef ArduinoMega2560
 extern "C" {
-
-void __vector_32()
-{
+	void __vector_32()
+	{
+	}
 }
-
-}
-
 #endif
 
 typedef void (*pFunc)(void); // type for display function pointers
@@ -425,20 +93,16 @@ const unsigned int delay0005ms = (int)(5ul * t2CyclesPerSecond / 256000ul);
 
 union union_16
 {
-
 	unsigned int ui;
 	uint8_t u8[2];
-
 };
 
 union union_64
 {
-
 	unsigned long long ull;
 	unsigned long ul[2];
 	unsigned int ui[4];
 	uint8_t u8[8];
-
 };
 
 #ifdef useChryslerMAPCorrection
@@ -3160,7 +2824,7 @@ const uint8_t bpIdxEEPROMview =	nextAllowedValue + 1;
 #endif
 const uint8_t bpIdxSize =	nextAllowedValue + 1;
 
-const uint8_t * buttonPressAdrList[(unsigned int)(bpIdxSize)] PROGMEM = {
+const uint8_t * const buttonPressAdrList[(unsigned int)(bpIdxSize)] PROGMEM = {
 	bpListMain,
 	bpListSetting,
 	bpListParam,
@@ -5434,7 +5098,7 @@ union union_64 * tempPtr[5] = {
 union union_64 * tu1 = tempPtr[0];
 union union_64 * tu2 = tempPtr[1];
 
-const uint8_t * S64programList[] PROGMEM = {
+const uint8_t * const S64programList[] PROGMEM = {
 	prgmFuelUsed,
 	prgmFuelRate,
 	prgmEngineRunTime,
