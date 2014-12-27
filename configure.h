@@ -5,9 +5,7 @@
  *
  *    Description:  Configuration variables for mpguino
  *
- *        Version:  1.0
  *        Created:  12/27/2014 09:48:33 PM
- *       Compiler:  gcc
  *
  * =====================================================================================
  */

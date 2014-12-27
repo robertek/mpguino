@@ -5,14 +5,12 @@
  *
  *    Description:  MPGuino - open source fuel consumption tracking system
  *
- *        Version:  1.0
+ *        Version:  2.0
  *        Created:  12/27/2014 09:43:50 PM
- *       Compiler:  gcc
+ *       Compiler:  avr-g++
  *
- *        License:  gpl 2.0
+ *        License:  gpl v2 (see LICENSE file)
  *      Additions:  mass production use rights reserved by opengauge.org
- *                  personal use is perfectly fine
- *                  no warranties expressed or implied
  *         Thanks:  Special thanks to the good folks at ecomodder.com, 
  *                  ardunio.cc, avrfreaks.net, cadsoft.de, atmel.com, and all 
  *                  the folks who donate their time and resources and share 
