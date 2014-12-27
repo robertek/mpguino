@@ -1,0 +1,192 @@
+### External connections ###
+
+Legacy MPGuino hardware is defined as anything that MPGuino was originally designed to run on. This includes
+   Arduino Duemilanove, Arduino Uno, JellyBeanDriver board, meelis11 board, iDuino, and any other board based off the
+   original MPGuino schematic, that can be found at http://ecomodder.com/wiki/index.php/MPGuino
+
+Vehicle interface pins
+  legacy MPGuino hardware
+	injector sense open  PD2 (INT0)
+	injector sense close PD3 (INT1)
+	speed                PC0 (PCINT8)
+	(if configured) MAP  PC1 (ADC1)
+	(if configured) Baro PC2 (ADC2)
+
+  TinkerKit! LCD module
+	injector sense open
+	injector sense close
+	speed                PB1 (PCINT1)
+	(if configured) MAP  PF7 (ADC7)
+	(if configured) Baro PF6 (ADC6)
+
+  Arduino Mega 2560
+	injector sense open  PE4 (INT4)
+	injector sense close PE5 (INT5)
+	speed                PK0 (PCINT16)
+	(if configured) MAP  PF1 (ADC1)
+	(if configured) Baro PF2 (ADC2)
+
+          --------------------------------------------
+         |                 MAP SENSOR                 |
+         |                                            |
+         |                                            |
+         |   +5V             SIGNAL          MAP      |
+         |   SUPPLY          GROUND          SIGNAL   |
+         |     3               2               1      |
+          --------------------------------------------
+               o               o               o
+               |               |               |
+               |               |               |              R7 (JBD)
+               |               |               o----------------vvv--o PC1 - legacy MPGuino hardware
+               |               |               |                2.2k   PF1 - Arduino Mega 2560
+               |               |               |                       PF7 - TinkerKit! LCD module
+               o               o               o
+          --------------------------------------------
+         |   C1-27           C2-27           C2-23    |
+         |   +5V             SIGNAL          MAP      |
+         |   SUPPLY          GROUND          SIGNAL   |
+         |                                            |
+         |                  CHRYSLER                  |
+         |       NGC POWERTRAIN CONTROL MODULE        |
+          --------------------------------------------
+                 (older Chrysler PCMs similar)
+
+
+          --------------------------------------------
+         |                Baro SENSOR                 |
+         |         (use a spare MAP sensor)           |
+         |                                            |
+         |   +5V             SIGNAL          Baro     |
+         |   SUPPLY          GROUND          SIGNAL   |
+         |     3               2               1      |
+          --------------------------------------------
+               o               o               o
+               |               |               |
+               |               |               |              R6 (JBD)
+               |               |               o----------------vvv--o PC2 - legacy MPGuino hardware
+               |               |                                2.2k   PF2 - Arduino Mega 2560
+               |               |                                       PF6 - TinkerKit! LCD module
+               o               o
+          --------------------------------------------
+         |   C1-27           C2-27                    |
+         |   +5V             SIGNAL                   |
+         |   SUPPLY          GROUND                   |
+         |                                            |
+         |                  CHRYSLER                  |
+         |       NGC POWERTRAIN CONTROL MODULE        |
+          --------------------------------------------
+                 (older Chrysler PCMs similar)
+
+
+LCD Pins - Legacy
+  legacy MPGuino hardware
+	DIR        PD4
+	DB4        PD7
+	DB5        PB0
+	DB6        PB4
+	DB7        PB5
+	Enable     PD5
+	Contrast   PD6, controlled by PWM on OC0A
+	Brightness PB1, controlled by PWM on OC1A
+
+  TinkerKit! LCD module
+    RW         PF0
+	DIR        PF1
+	DB4        PF4
+	DB5        PD4
+	DB6        PD6
+	DB7        PB4
+	Enable     PE6
+	Contrast   PB5, controlled by PWM on OC1A
+	Brightness PB6, controlled by PWM on OC1B
+
+  Arduino Mega 2560
+	DIR        PA4
+	DB4        PA3
+	DB5        PA2
+	DB6        PA1
+	DB7        PA0
+	Enable     PA5
+	Contrast   PB7, controlled by PWM on OC0A
+	Brightness PB5, controlled by PWM on OC1A
+
+LCD Pins - Parallax Serial Interface
+  legacy MPGuino hardware
+	RX D1 (TXD)
+
+  Arduino Mega 2560
+    RX E1 (TXD0)
+
+Buttons - Legacy
+  legacy MPGuino hardware
+	left    PC3 (PCINT11)
+	middle  PC4 (PCINT12)
+	right   PC5 (PCINT13)
+
+  Arduino Mega 2560
+	left    PK3 (PCINT19)
+	middle  PK4 (PCINT20)
+	right   PK5 (PCINT21)
+
+Buttons - Multiplexed Analog (diagram courtesy of josemapiro)
+  legacy MPGuino hardware
+	left, middle, right, extra#1, extra#2 PC3 (ADC3)
+
+  TinkerKit! LCD module
+	left, middle, right, extra#1, extra#2 PF7 (ADC7)
+
+  Arduino Mega 2560
+	left, middle, right, extra#1, extra#2 PF3 (ADC3)
+
+
+             o---------------o---------------o---------------o---------------o--o GND
+        R2   |          R3   |          R4   |          R5   |          R6   |
+     o--vvv--o       o--VVV--o       o--vvv--o       o--vvv--o       o--vvv--o
+     |  2.2k         |  4.7k         |  10k          |  22k          |  47k
+     o               o               o               o               o
+      /               /               /               /               /
+     o left          o middle        o right         o Extra#1       o Extra#2
+     |               |               |               |               |
+     o---------------o---------------o---------------o---------------o--vvv--o--o 5V
+                                                                     | R1 1k
+                                                                     o----------o PC3 - legacy MPGuino hardware
+                                                                                  PF3 - Arduino Mega 2560
+                                                                                  PF7 - TinkerKit! LCD module
+
+Buttons - Parallax 5-position switch (diagram based on josemapiro efforts)
+          (or any 5-position switch module with 10k pullup resistors on their switches)
+  legacy MPGuino hardware
+	left, middle, right, extra#1, extra#2 PC3 (ADC3)
+
+  TinkerKit! LCD module
+	left, middle, right, extra#1, extra#2 PF7 (ADC7)
+
+  Arduino Mega 2560
+	left, middle, right, extra#1, extra#2 PF3 (ADC3)
+
+                                                                                  PF3 - Arduino Mega 2560
+                                                                                  PF7 - TinkerKit! LCD module
+                                                                     o----------o PC3 - legacy MPGuino hardware
+                                                                     | R1 1k
+     o---------------o---------------o---------------o---------------o--vvv--o--o 5V
+     |               |               |               |               |
+     |  left         | middle        |  right        | Extra#1       | Extra#2
+     |               |               |               |               |
+     |  R2           |  R3           |  R4           |  R5           |  R6
+     o--vvv--o       o--VVV--o       o--vvv--o       o--vvv--o       o--vvv--o
+        2.2k |          4.7k |          10k  |          22k  |          47k  |
+             |               |               |               |               |
+             |               |               |               |               |
+             o               o               o               o               o
+          -----------------------------------------------------------------------
+         |   4               7               2               6               3   |
+         |   LT              UP              RT             CTR              DN  |
+         |                                                                       |
+         |                                                                       |
+         |                  VCC             GND                                  |
+         |                   5               8                                   |
+          -----------------------------------------------------------------------
+                             o               o
+                             |               |
+                             o               o----------------------------------O GND
+                            N/C
