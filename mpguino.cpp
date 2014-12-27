@@ -11,9 +11,9 @@
  *
  *        License:  gpl v2 (see LICENSE file)
  *      Additions:  mass production use rights reserved by opengauge.org
- *         Thanks:  Special thanks to the good folks at ecomodder.com, 
- *                  ardunio.cc, avrfreaks.net, cadsoft.de, atmel.com, and all 
- *                  the folks who donate their time and resources and share 
+ *         Thanks:  Special thanks to the good folks at ecomodder.com,
+ *                  ardunio.cc, avrfreaks.net, cadsoft.de, atmel.com, and all
+ *                  the folks who donate their time and resources and share
  *                  their experiences freely
  *
  * =============================================================================
@@ -37,7 +37,6 @@
  scan for key presses and perform their function (change screen, reset a trip, goto setup, edit screen, restore trips, etc)
  pause for remainder of 1/2 second
  }
-
 */
 
 #include <stdlib.h>
@@ -55,53 +54,14 @@ extern "C" {
 }
 #endif
 
+/******************************************************************************/
+/* BEGIN function protoypes */
+/******************************************************************************/
+
 typedef void (*pFunc)(void); // type for display function pointers
 #ifdef useBuffering
 typedef void (*qFunc)(uint8_t); // type for buffer function pointers
 #endif
-
-const uint8_t loopsPerSecond = 2; // how many times will we try and loop in a second
-const uint8_t samplesPerSecond = 2; // how many times will we try to sample the ADC output in a second
-
-#ifdef use20MHz
-const uint8_t processorSpeed = 20; // processor speed in megahertz
-#ifdef useLegacyLCD
-const uint8_t lcdDelayTable[4] PROGMEM = { 1, 2, 51, 185 }; // LCD delay values, using ADC freewheeling and a divider of 128
-#endif
-#else
-const uint8_t processorSpeed = 16; // processor speed in megahertz
-#ifdef useLegacyLCD
-const uint8_t lcdDelayTable[4] PROGMEM = { 1, 1, 41, 148 }; // LCD delay values, using ADC freewheeling and a divider of 128
-#endif
-#endif
-
-const unsigned long t2CyclesPerSecond = (unsigned long)(processorSpeed * 15625ul); // (processorSpeed * 1000000 / (timer 2 prescaler))
-const unsigned long loopSystemLength = (t2CyclesPerSecond / (loopsPerSecond * 10)); // divided by 10 to keep cpu loading value from overflowing
-const unsigned int loopTickLength = (unsigned int)(t2CyclesPerSecond / (loopsPerSecond * 256ul));
-const unsigned int sampleTickLength  = (unsigned int)(t2CyclesPerSecond / (samplesPerSecond * 256ul));
-const unsigned int myubbr = (unsigned int)(processorSpeed * 625ul / 96ul - 1);
-const unsigned int keyDelay = (unsigned int)(t2CyclesPerSecond / 256ul);
-const unsigned int keyShortDelay = keyDelay - (5 * keyDelay / 100); // wait 5/100 of a second before accepting button presses
-const unsigned int vssResetDelay = loopTickLength; // VSS pulse timeout is the same as the loop system length
-
-const uint8_t holdDelay = loopsPerSecond * 2 - 1;
-
-const unsigned int delay1500ms = (int)(1500ul * t2CyclesPerSecond / 256000ul);
-const unsigned int delay0005ms = (int)(5ul * t2CyclesPerSecond / 256000ul);
-
-union union_16
-{
-	unsigned int ui;
-	uint8_t u8[2];
-};
-
-union union_64
-{
-	unsigned long long ull;
-	unsigned long ul[2];
-	unsigned int ui[4];
-	uint8_t u8[8];
-};
 
 #ifdef useChryslerMAPCorrection
 void readMAP(void);
@@ -256,7 +216,9 @@ void doBigDTEdisplay(void);
 void doCursorUpdateBigTTEscreen(void);
 void doBigTTEdisplay(void);
 #endif
-#ifdef useClock // Clock support section
+
+/* Clock support section */
+#ifdef useClock
 void doCursorUpdateSystemTimeScreen(void);
 void doDisplaySystemTime(void);
 void doGoEditSystemTime(void);
@@ -265,7 +227,9 @@ void doEditSystemTimeChangeDigit(void);
 void doEditSystemTimeSave(void);
 void doEditSystemTimeCancel(void);
 #endif
-#ifdef useSavedTrips // Trip save/restore/raw data view support section
+
+/* Trip save/restore/raw data view support section */
+#ifdef useSavedTrips
 void doCursorUpdateTripShow(void);
 void doTripSaveDisplay(void);
 void doTripShowDisplay(void);
@@ -283,7 +247,9 @@ void doTripPrintType(uint8_t tripIdx);
 void doTripBumpSlot(void);
 void doTripShowCancel(void);
 #endif
-#ifdef useScreenEditor // Programmable main display screen edit support section
+
+/* Programmable main display screen edit support section*/
+#ifdef useScreenEditor
 void doCursorUpdateScreenEdit(void);
 void doScreenEditDisplay(void);
 void doGoScreenEdit(void);
@@ -292,6 +258,7 @@ void doScreenEditRevert(void);
 void doScreenEditBump(void);
 void doSaveScreen(void);
 #endif
+
 uint8_t loadParams(void);
 uint8_t eepromWriteVal(unsigned int eePtr, unsigned long val);
 unsigned long eepromReadVal(unsigned int eePtr);
@@ -300,6 +267,57 @@ void callFuncPointer(const uint8_t * funcIdx);
 unsigned long cycles2(void);
 unsigned long findCycleLength(unsigned long lastCycle, unsigned long thisCycle);
 int main(void);
+
+/******************************************************************************/
+/* END function protoypes */
+/******************************************************************************/
+
+/******************************************************************************/
+/* BEGIN global variables */
+/******************************************************************************/
+
+const uint8_t loopsPerSecond = 2; // how many times will we try and loop in a second
+const uint8_t samplesPerSecond = 2; // how many times will we try to sample the ADC output in a second
+
+#ifdef use20MHz
+const uint8_t processorSpeed = 20; // processor speed in megahertz
+#ifdef useLegacyLCD
+const uint8_t lcdDelayTable[4] PROGMEM = { 1, 2, 51, 185 }; // LCD delay values, using ADC freewheeling and a divider of 128
+#endif
+#else
+const uint8_t processorSpeed = 16; // processor speed in megahertz
+#ifdef useLegacyLCD
+const uint8_t lcdDelayTable[4] PROGMEM = { 1, 1, 41, 148 }; // LCD delay values, using ADC freewheeling and a divider of 128
+#endif
+#endif
+
+const unsigned long t2CyclesPerSecond = (unsigned long)(processorSpeed * 15625ul); // (processorSpeed * 1000000 / (timer 2 prescaler))
+const unsigned long loopSystemLength = (t2CyclesPerSecond / (loopsPerSecond * 10)); // divided by 10 to keep cpu loading value from overflowing
+const unsigned int loopTickLength = (unsigned int)(t2CyclesPerSecond / (loopsPerSecond * 256ul));
+const unsigned int sampleTickLength  = (unsigned int)(t2CyclesPerSecond / (samplesPerSecond * 256ul));
+const unsigned int myubbr = (unsigned int)(processorSpeed * 625ul / 96ul - 1);
+const unsigned int keyDelay = (unsigned int)(t2CyclesPerSecond / 256ul);
+const unsigned int keyShortDelay = keyDelay - (5 * keyDelay / 100); // wait 5/100 of a second before accepting button presses
+const unsigned int vssResetDelay = loopTickLength; // VSS pulse timeout is the same as the loop system length
+
+const uint8_t holdDelay = loopsPerSecond * 2 - 1;
+
+const unsigned int delay1500ms = (int)(1500ul * t2CyclesPerSecond / 256000ul);
+const unsigned int delay0005ms = (int)(5ul * t2CyclesPerSecond / 256000ul);
+
+union union_16
+{
+	unsigned int ui;
+	uint8_t u8[2];
+};
+
+union union_64
+{
+	unsigned long long ull;
+	unsigned long ul[2];
+	unsigned int ui[4];
+	uint8_t u8[8];
+};
 
 const uint8_t idxDoNothing =				0;
 const uint8_t idxNoSupport =				idxDoNothing + 1;
@@ -3059,6 +3077,11 @@ const uint8_t bufferSize = 32;
 const uint8_t bufferIsFull = 	0b10000000;
 const uint8_t bufferIsEmpty = 	0b01000000;
 
+/******************************************************************************/
+/* END global variables */
+/******************************************************************************/
+
+
 class Buffer // Buffer prototype
 {
 
@@ -3259,6 +3282,11 @@ volatile uint8_t thisAnalogKeyPressed = buttonsUp;
 char mBuff1[17]; // used by format(), doFormat()
 char mBuff2[17]; // used by editParm(), bar graph routines
 char pBuff[12]; // used by editParm(), editClock()
+
+
+/******************************************************************************/
+/* BEGIN interupts */
+/******************************************************************************/
 
 // this ISR gets called every time timer 2 overflows.
 // timer 2 prescaler is set at 64, and it's an 8 bit counter
@@ -3872,6 +3900,10 @@ ISR( USART_UDRE_vect )
 
 }
 #endif
+/******************************************************************************/
+/* END interupts */
+/******************************************************************************/
+
 
 #ifdef useChryslerMAPCorrection
 void readMAP(void)
@@ -4178,12 +4210,12 @@ void displayBigNumber(char * str)
 
 		if ((d == '.') || (d == ':') || (d == ';'))
 		{
-  
+
 			if (d == ':') e = decimalPtChar;
 			if (d == ';') d = ' ';
 			else d = decimalPtChar;
 			str++;
-  
+
   		}
   		else d = ' ';
 
@@ -4910,7 +4942,6 @@ uint8_t Buffer::updatePointer(volatile uint8_t * pointer, uint8_t clearFlag, uin
 
 void Buffer::push(uint8_t value)
 {
-
 	while (bufferStatus & bufferIsFull);
 
 	uint8_t oldSREG = SREG; // save interrupt flag status
@@ -4919,19 +4950,16 @@ void Buffer::push(uint8_t value)
 	if (bufferStatus & bufferIsFull) onFull();
 	else
 	{
-
-		if (bufferStatus & bufferIsEmpty) onNoLongerEmpty();
+		if (bufferStatus & bufferIsEmpty)
+			onNoLongerEmpty();
 		storage[(unsigned int)(updatePointer(&bufferStart, bufferIsEmpty, bufferIsFull))] = value; // save a buffered character
-
 	}
 
 	SREG = oldSREG; // restore interrupt flag status
-
 }
 
 void Buffer::pull(void)
 {
-
 	uint8_t s = 0;
 
 	uint8_t oldSREG = SREG; // save interrupt flag status
@@ -4940,99 +4968,79 @@ void Buffer::pull(void)
 	if (bufferStatus & bufferIsEmpty) onEmpty();
 	else
 	{
-
 		if (bufferStatus & bufferIsFull) onNoLongerFull();
 		process(storage[(unsigned int)(updatePointer(&bufferEnd, bufferIsFull, bufferIsEmpty))]); // get a buffered character
-
 	}
 
 	SREG = oldSREG; // restore interrupt flag status
-
 }
 #endif
 
 void Trip::reset(void)
 {
-
-	for (uint8_t x = 0; x < rvLength; x++) collectedData[(unsigned int)(x)] = 0;
-
+	for (uint8_t x = 0; x < rvLength; x++)
+		collectedData[(unsigned int)(x)] = 0;
 }
 
 void Trip::transfer(Trip t)
 {
-
-	for (uint8_t x = 0; x < rvLength; x++) collectedData[(unsigned int)(x)] = t.collectedData[(unsigned int)(x)];
-
+	for (uint8_t x = 0; x < rvLength; x++)
+		collectedData[(unsigned int)(x)] = t.collectedData[(unsigned int)(x)];
 }
 
 void Trip::update(Trip src)
 {
-
 	add32(rvVSSpulseIdx, src.collectedData[(unsigned int)(rvVSSpulseIdx)]);
 	add32(rvInjPulseIdx, src.collectedData[(unsigned int)(rvInjPulseIdx)]);
 
 	for (uint8_t x = rvVSScycleIdx; x < rvLength; x += 2)
 	{
-
 		add64s(x, src.collectedData[(unsigned int)(x)]);
 		add32(x + 1, src.collectedData[(unsigned int)(x + 1)]);
-
 	}
-
 }
 
 void Trip::add64s(uint8_t calcIdx, unsigned long v)
 {
-
 	add32(calcIdx, v); // add to accumulator
-	if (collectedData[(unsigned int)(calcIdx)] < v) collectedData[(unsigned int)(calcIdx + 1)]++; // handle any possible overflow
-
+	if (collectedData[(unsigned int)(calcIdx)] < v)
+		collectedData[(unsigned int)(calcIdx + 1)]++; // handle any possible overflow
 }
 
 void Trip::add32(uint8_t calcIdx, unsigned long v)
 {
-
 	collectedData[(unsigned int)(calcIdx)] += v;
-
 }
 
 #ifdef useWindowFilter
 void Trip::subtract(Trip t)
 {
-
 	sub32(rvVSSpulseIdx, t.collectedData[(unsigned int)(rvVSSpulseIdx)]);
 	sub32(rvInjPulseIdx, t.collectedData[(unsigned int)(rvInjPulseIdx)]);
 
 	for (uint8_t x = 2; x < rvLength; x += 2)
 	{
-
-		if (collectedData[(unsigned int)(x)] < t.collectedData[(unsigned int)(x)]) collectedData[(unsigned int)(x + 1)]--;
+		if (collectedData[(unsigned int)(x)] < t.collectedData[(unsigned int)(x)])
+			collectedData[(unsigned int)(x + 1)]--;
 		sub32(x, t.collectedData[(unsigned int)(x)]);
 		sub32(x + 1, t.collectedData[(unsigned int)(x + 1)]);
-
 	}
-
 }
 
 void Trip::sub32(uint8_t calcIdx, unsigned long v)
 {
-
 	collectedData[(unsigned int)(calcIdx)] -= v;
-
 }
 
 #endif
 #ifdef useSavedTrips
 unsigned int getBaseTripPointer(uint8_t tripPos)
 {
-
 	return (unsigned int)(tripPos) * (unsigned int)(tripListSize) + eePtrSavedTripsStart;
-
 }
 
 uint8_t Trip::load(uint8_t tripPos)
 {
-
 	unsigned int t = getBaseTripPointer(tripPos);
 	uint8_t b = (uint8_t)(eepromReadVal((unsigned int)(t + tripListSigPointer)));
 
@@ -5040,21 +5048,17 @@ uint8_t Trip::load(uint8_t tripPos)
 
 	if (b == guinosig)
 	{
-
-		for (uint8_t x = 0; x < tripListLength; x++) collectedData[(unsigned int)(x)] = eepromReadVal(++t);
-
+		for (uint8_t x = 0; x < tripListLength; x++)
+			collectedData[(unsigned int)(x)] = eepromReadVal(++t);
 		b = 1;
-
 	}
 	else b = 0;
 
 	return b;
-
 }
 
 uint8_t Trip::save(uint8_t tripPos)
 {
-
 	unsigned int t = getBaseTripPointer(tripPos);
 
 #ifndef useClock
@@ -5070,12 +5074,12 @@ uint8_t Trip::save(uint8_t tripPos)
 
 	eepromWriteVal(t++, convertTime(outputCycles));
 
-	for (uint8_t x = 0; x < tripListLength; x++) eepromWriteVal(t++, collectedData[(unsigned int)(x)]);
+	for (uint8_t x = 0; x < tripListLength; x++)
+		eepromWriteVal(t++, collectedData[(unsigned int)(x)]);
 
 	eepromWriteVal(t++, guinosig);
 
 	return 1;
-
 }
 #endif
 
@@ -5153,7 +5157,6 @@ const uint8_t * const S64programList[] PROGMEM = {
 
 unsigned long SWEET64(const uint8_t * sched, uint8_t tripIdx)
 {
-
 	uint8_t spnt = 0;
 	uint8_t instr;
 	uint8_t b;
@@ -5163,14 +5166,11 @@ unsigned long SWEET64(const uint8_t * sched, uint8_t tripIdx)
 
 	while (true)
 	{
-
 #ifdef useSWEET64trace
 		if (tf)
 		{
-
 			pushSerialCharacter(13);
 			pushHexWord((unsigned int)(sched));
-
 		}
 
 #endif
@@ -5179,51 +5179,41 @@ unsigned long SWEET64(const uint8_t * sched, uint8_t tripIdx)
 #ifdef useSWEET64trace
 		if (tf)
 		{
-
 			pushSerialCharacter(32);
 			pushHexByte(tripIdx);
 			pushSerialCharacter(32);
 			pushHexByte(spnt);
 			pushSerialCharacter(32);
 			pushHexByte(instr);
-
 		}
 #endif
 
 		if (instr & 0x40)
 		{
-
 			b = pgm_read_byte(sched++) - 0x11;
 #ifdef useSWEET64trace
 
 			if (tf)
 			{
-
 				pushSerialCharacter(32);
 				pushHexByte(b);
-
 			}
 #endif
 
 			tu1 = tempPtr[(unsigned int)((b >> 4) & 0x07)];
 			tu2 = tempPtr[(unsigned int)(b & 0x07)];
-
 		}
 
 		if (instr & 0x80)
 		{
-
 			b = pgm_read_byte(sched++);
 
 #ifdef useSWEET64trace
 			if (tf)
 			{
-
 				pushSerialCharacter(32);
 				pushHexByte(b);
-
 			}
-
 #endif
 		}
 
@@ -5243,10 +5233,8 @@ unsigned long SWEET64(const uint8_t * sched, uint8_t tripIdx)
 
 		if (instr == instrDone)
 		{
-
 			if (spnt--) sched = prgmStack[(unsigned int)(spnt)];
 			else break;
-
 		}
 		else if (instr == instrTraceOn) tf = 1;
 		else if (instr == instrTraceOff) tf = 0;
@@ -5298,38 +5286,30 @@ unsigned long SWEET64(const uint8_t * sched, uint8_t tripIdx)
 #ifdef useSWEET64trace
 		if (tf)
 		{
-
 			for (uint8_t x = 0;x < 5; x++)
 			{
-
 				pushSerialCharacter(9);
 				pushHexDWord(tempPtr[(unsigned int)(x)]->ul[1]);
 				pushSerialCharacter(32);
 				pushHexDWord(tempPtr[(unsigned int)(x)]->ul[0]);
 				pushSerialCharacter(13);
-
 			}
-
 		}
 #endif
 
 		if (f)
 		{
-
 			if (b < 128) sched += b;
 			else sched -= (256 - b);
 #ifdef useSWEET64trace
 
 			if (tf)
 			{
-
 				pushSerialCharacter(9);
 				pushHexWord((unsigned int)(sched));
 				pushSerialCharacter(13);
-
 			}
 #endif
-
 		}
 
 #ifdef useSWEET64trace
@@ -5339,25 +5319,22 @@ unsigned long SWEET64(const uint8_t * sched, uint8_t tripIdx)
 	}
 
 	return tempPtr[1]->ul[0];
-
 }
 
 #ifdef useSerialDebugOutput
 void pushHexNybble(uint8_t val)
 {
-
 	val &= 0x0F;
-	if (val < 0x0A) pushSerialCharacter(val + 0x30);
-	else pushSerialCharacter(val + 0x37);
-
+	if (val < 0x0A)
+		pushSerialCharacter(val + 0x30);
+	else
+		pushSerialCharacter(val + 0x37);
 }
 
 void pushHexByte(uint8_t val)
 {
-
 	pushHexNybble(val >> 4);
 	pushHexNybble(val);
-
 }
 
 void pushHexWord(unsigned int val)
@@ -5375,89 +5352,71 @@ void pushHexDWord(unsigned long val)
 
 void copy64(union union_64 * an, union union_64 * ann)
 {
-
-	for (uint8_t x = 0; x < 8; x++) an->u8[(unsigned int)(x)] = ann->u8[(unsigned int)(x)];
-
+	for (uint8_t x = 0; x < 8; x++)
+		an->u8[(unsigned int)(x)] = ann->u8[(unsigned int)(x)];
 }
 
 void tripVarLoad64(union union_64 * an, uint8_t tripIdx, uint8_t dataIdx)
 {
-
-	if (dataIdx < rvVSScycleIdx) init64(an, tripArray[(unsigned int)(tripIdx)].collectedData[(unsigned int)(dataIdx)]);
-	else copy64(an, (union union_64 *)&tripArray[(unsigned int)(tripIdx)].collectedData[(unsigned int)(dataIdx)]);
-
+	if (dataIdx < rvVSScycleIdx)
+		init64(an, tripArray[(unsigned int)(tripIdx)].collectedData[(unsigned int)(dataIdx)]);
+	else
+		copy64(an, (union union_64 *)&tripArray[(unsigned int)(tripIdx)].collectedData[(unsigned int)(dataIdx)]);
 }
 
 void EEPROMsave64(union union_64 * an, uint8_t dataIdx)
 {
-
 	eepromWriteVal((unsigned int)(dataIdx), an->ul[0]);
-
 }
 
 void init64(union union_64 * an, unsigned long dWordL)
 {
-
 	an->ull = 0;
 	an->ul[0] = dWordL;
-
 }
 
 void swap64(union union_64 * an, union union_64 * ann) // swap ann and an
 {
-
 	uint8_t b = 0;
 
 	for (uint8_t x = 0; x < 8; x++)
 	{
-
 		b = ann->u8[(unsigned int)(x)];
 		ann->u8[(unsigned int)(x)] = an->u8[(unsigned int)(x)];
 		an->u8[(unsigned int)(x)] = b;
-
 	}
-
 }
 
 void shr64(union union_64 * an)
 {
-
 	uint8_t b = 0;
 	uint8_t c;
 
 	for (uint8_t x = 7; x < 8; x--)
 	{
-
 		c = b;
 		b = ((an->u8[(unsigned int)(x)] & 0x01) ? 0x80 : 0x00);
 		an->u8[(unsigned int)(x)] >>= 1;
 		an->u8[(unsigned int)(x)] += c;
-
 	}
-
 }
 
 void shl64(union union_64 * an)
 {
-
 	uint8_t b = 0;
 	uint8_t c;
 
 	for (uint8_t x = 0; x < 8; x++)
 	{
-
 		c = b;
 		b = ((an->u8[(unsigned int)(x)] & 0x80) ? 0x01 : 0x00);
 		an->u8[(unsigned int)(x)] <<= 1;
 		an->u8[(unsigned int)(x)] += c;
-
 	}
-
 }
 
 void add64(union union_64 * an, union union_64 * ann, uint8_t mode)
 {
-
 	uint8_t d;
 	int enn;
 	union union_16 * n = (union union_16 *)&enn;
@@ -5465,7 +5424,6 @@ void add64(union union_64 * an, union union_64 * ann, uint8_t mode)
 	n->u8[1] = ((mode) ? 0x01 : 0x00);
 	for (uint8_t x = 0; x < 8; x++)
 	{
-
 		d = ((mode) ? 0xFF : 0x00);
 		d ^= ann->u8[(unsigned int)(x)];
 		n->u8[0] = n->u8[1];
@@ -5473,15 +5431,12 @@ void add64(union union_64 * an, union union_64 * ann, uint8_t mode)
 		n->ui += (unsigned int)an->u8[(unsigned int)(x)];
 		n->ui += d;
 		an->u8[(unsigned int)(x)] = n->u8[0];
-
 	}
-
 }
 
 #ifndef useSWEET64multDiv
 void mul64(union union_64 * an, union union_64 * ann)
 {
-
 	union union_64 * multiplier = tempPtr[3];
 	union union_64 * multiplicand = tempPtr[4];
 
@@ -5491,19 +5446,15 @@ void mul64(union union_64 * an, union union_64 * ann)
 
 	while (!(zeroTest64(multiplier)))
 	{
-
 		if (lsbTest64(multiplier)) add64(an, multiplicand, 0);
 
 		shl64(multiplicand);
 		shr64(multiplier);
-
 	}
-
 }
 
 void div64(union union_64 * an, union union_64 * ann) // dividend in an, divisor in ann
 {
-
 	union union_64 * quotientBit = tempPtr[3];
 	union union_64 * divisor = tempPtr[4];
 
@@ -5514,25 +5465,19 @@ void div64(union union_64 * an, union union_64 * ann) // dividend in an, divisor
 
 	if (zeroTest64(divisor))
 	{ // if divisor is zero, mark as overflow, then exit
-
 		add64(an, quotientBit, 1); // subtract 1 from zeroed-out result to generate overflow value
 		copy64(ann, an); // copy overflow value to remainder
-
 	}
 	else if (!(zeroTest64(ann)))
 	{ // if dividend is not zero,
-
 		while (!(msbTest64(divisor)))
 		{ // ensure that divisor MSB is set
-
 			shl64(divisor); // shift divisor left one bit
 			shl64(quotientBit); // shift quotient mark bit left by one
-
 		}
 
 		while (!(zeroTest64(quotientBit)))
 		{ // continue while there is a quotient mark bit
-
 			if (ltOrEtest64(divisor, ann))
 			{ // if divisor is less than or equal to dividend,
 				add64(ann, divisor, 1); // subtract divisor value from dividend
@@ -5541,70 +5486,53 @@ void div64(union union_64 * an, union union_64 * ann) // dividend in an, divisor
 
 			shr64(divisor); // shift divisor right by one bit
 			shr64(quotientBit); // shift quotient mark bit right by one bit
-
 		}
-
 	}
-
 }
 #endif
 
 uint8_t zeroTest64(union union_64 * an)
 {
-
 	uint8_t b = 0;
 
 	for (uint8_t x = 0; x < 8; x++) b |= an->u8[(unsigned int)(x)];
 
 	return (b == 0);
-
 }
 
 uint8_t ltOrEtest64(union union_64 * an, union union_64 * ann)
 {
-
 	uint8_t b = 1;
 
 	for (uint8_t x = 7; x < 8; x--)
 	{
-
 		if (an->u8[(unsigned int)(x)] < ann->u8[(unsigned int)(x)]) break;
 		else if (an->u8[(unsigned int)(x)] > ann->u8[(unsigned int)(x)])
 		{
-
 			b = 0;
 			break;
-
 		}
-
 	}
 
 	return (b == 1);
-
 }
 
 uint8_t lsbTest64(union union_64 * an)
 {
-
 	return ((an->u8[0] & 0x01) != 0);
-
 }
 
 uint8_t msbTest64(union union_64 * an)
 {
-
 	return ((an->u8[7] & 0x80) != 0);
-
 }
 
 char * doFormat(uint8_t tripIdx, uint8_t dispPos)
 {
-
 	uint8_t r = (tripIdx & dfTripMask) >> dfBitShift;
 	uint8_t f = tripIdx & dfValMask;
 
 	return doFormat(r, f, dispPos);
-
 }
 
 #if useFuelCost
@@ -5663,7 +5591,6 @@ const uint8_t calcLabelIdx[] PROGMEM = { // +128 is metric flag - metric label h
 
 unsigned long doCalculate(uint8_t calcIdx, uint8_t tripIdx)
 {
-
 	uint8_t i = tripIdx;
 #ifdef useAnalogRead
 	if ((calcIdx >= dfMaxValCount) && (calcIdx < dfMaxValAnalogCount)) i = calcIdx - dfMaxValCount;
@@ -5673,12 +5600,10 @@ unsigned long doCalculate(uint8_t calcIdx, uint8_t tripIdx)
 #endif
 
 	return SWEET64((const uint8_t *)pgm_read_word(&S64programList[(unsigned int)(calcIdx)]), i);
-
 }
 
 char * format64(const uint8_t * prgmPtr, unsigned long num, char * str, uint8_t ndp)
 {
-
 	uint8_t b;
 	uint8_t c;
 
@@ -5690,12 +5615,10 @@ char * format64(const uint8_t * prgmPtr, unsigned long num, char * str, uint8_t 
 	if (l == 255) strcpy_P(str, overFlowStr);
 	else
 	{
-
 		uint8_t z = tempPtr[2]->u8[7];	// load leading zero character
 
 		for (uint8_t x = 0; x < l; x++)
 		{
-
 			uint8_t y = x * 2;
 			b = tempPtr[2]->u8[(unsigned int)(x)];
 			c = b / 10;
@@ -5707,20 +5630,16 @@ char * format64(const uint8_t * prgmPtr, unsigned long num, char * str, uint8_t 
 			if (b > 48) z = 48;
 			str[(unsigned int)(y)] = c;
 			str[(unsigned int)(y + 1)] = b;
-
 		}
 
 		str[l * 2] = 0;
-
 	}
 
 	return str;
-
 }
 
 char * format(unsigned long num, uint8_t ndp)
 {
-
 	uint8_t x = 9;
 	uint8_t y = 10;
 	uint8_t c;
@@ -5729,23 +5648,18 @@ char * format(unsigned long num, uint8_t ndp)
 
 	if (mBuff1[2] != '-')
 	{
-
 		while (x > 5)
 		{
-
 			if (y != 7)
 			{
-
 				c = mBuff1[(unsigned int)(x)];
 				if (c == ' ') c = '0';
 				x--;
-
 			}
 			else c = '.';
 
 			mBuff1[(unsigned int)(y)] = c;
 			y--;
-
 		}
 
 		x = 1;
@@ -5757,33 +5671,25 @@ char * format(unsigned long num, uint8_t ndp)
 
 			while ((y < 2 + ndp) && (mBuff1[(unsigned int)(y)] == ' '))
 			{
-
 				y++;
 				x = y;
-
 			}
-
 		}
 
 		for (uint8_t z = 0; z < 6; z++)
 		{
-
 			mBuff1[(unsigned int)(z)] = mBuff1[(unsigned int)(x)];
 			x++;
-
 		}
 
 		mBuff1[6] = 0;
-
 	}
 
 	return mBuff1;
-
 }
 
 char * doFormat(uint8_t tripIdx, uint8_t calcIdx, uint8_t dispPos)
 {
-
 	uint8_t numDecPt = pgm_read_byte(&calcDecimalPoints[(unsigned int)(calcIdx)]);
 	uint8_t calcWord = pgm_read_byte(&calcLabelIdx[(unsigned int)(calcIdx)]);
 
@@ -5793,46 +5699,34 @@ char * doFormat(uint8_t tripIdx, uint8_t calcIdx, uint8_t dispPos)
 
 	if ((calcIdx < dfMaxValDisplayCount) && (tripIdx < tripSlotCount))
 	{
-
 		an = doCalculate(calcIdx, tripIdx);
 
 		if ((dispPos & dispRaw) || (dispPos & dispFE) || (dispPos & dispDTE))
 		{
-
 			if (numDecPt) format(an, 3);
 			else format64(prgmFormatToNumber, an, mBuff1, 3);
 
 			if (dispPos & dispFE)
 			{
-
- 				c = 3;
-
+				c = 3;
 			}
 
 			if (dispPos & dispDTE)
 			{
-
- 				c = 4;
-
+				c = 4;
 			}
 
 			if ((dispPos & dispFE) || (dispPos & dispDTE))
 			{
-
 				p = 0;
 				if (mBuff1[2] != '-') // if number did not overflow
 				{
-  
-					
 					if ((mBuff1[(unsigned int)(2)] == '.') || ((mBuff1[(unsigned int)(3)] == '.') && (dispPos & dispDTE)))
 					{
-
 						if (mBuff1[0] == ' ') p++; // if number is less than 10, point to start of number
 						c++; // update end of number
-
 					}
 					else if (mBuff1[(unsigned int)(c)] != '.') strcpy_P(mBuff1, overFlowStr); // if number is greater than 999(9), mark as overflow
-
 				}
 
 				if (mBuff1[2] == '-') p++; // if number overflowed, point to start of overflow dashes
@@ -5840,28 +5734,20 @@ char * doFormat(uint8_t tripIdx, uint8_t calcIdx, uint8_t dispPos)
 				if (p > 0) for (uint8_t x = 0; x < (c + 1); x++) mBuff1[(unsigned int)(x)] = mBuff1[(unsigned int)(p++)];
 
 				mBuff1[(unsigned int)(c)] = 0;
-
 			}
-
 		}
 		else
 		{
-
 			if (calcWord == 0) format64(prgmFormatToTime, an, mBuff1, 0);
 			else format(an, numDecPt);
-
 		}
-
 	}
 	else
 	{
-
 		strcpy_P(mBuff1, overFlowStr);
-
 	}
 
 	return mBuff1;
-
 }
 
 unsigned long rformat(void)
@@ -7201,7 +7087,7 @@ void doBigFEdisplay(void)
 
 	uint8_t dIdx = fedSelect(bigFEscreenIdx);
 
-       	displayBigNumber(doFormat(dIdx, tFuelEcon, dispFE));
+	displayBigNumber(doFormat(dIdx, tFuelEcon, dispFE));
 
 	printStr(bigFEDispChars, dIdx);
 	gotoXY(12, 1);
@@ -7221,7 +7107,7 @@ void doCursorUpdateBigDTEscreen(void)
 void doBigDTEdisplay(void)
 {
 
-       	displayBigNumber(doFormat(fedSelect(bigDTEscreenIdx), tDistanceToEmpty, dispDTE));
+	displayBigNumber(doFormat(fedSelect(bigDTEscreenIdx), tDistanceToEmpty, dispDTE));
 
 }
 
@@ -7824,7 +7710,7 @@ void doCursorUpdateScreenEdit(void)
 
 void doScreenEditDisplay(void)
 {
-  
+
 	uint8_t i = screenCursor[(unsigned int)(screenEditIdx)];
 	uint8_t j = i;
 	i >>= 1;
@@ -7847,10 +7733,10 @@ void doScreenEditDisplay(void)
 		if (x == k)
 		{
 
-  			if (j == 1) m = 170;
+			if (j == 1) m = 170;
 			else n = 170;
 
-  		}
+		}
 
 		displayMainScreenFunction(x, l, m, n);
 
