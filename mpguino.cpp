@@ -7452,78 +7452,75 @@ void doBenchMark(void)
 #ifdef useEEPROMviewer
 void doEEPROMviewDisplay(void)
 {
-
 	print(format64(prgmFormatToNumber, (unsigned long)(screenCursor[(unsigned int)(eepromViewIdx)]), mBuff1, 3));
 	clrEOL();
 	gotoXY(0, 1);
 	print(format64(prgmFormatToNumber, eepromReadVal((unsigned int)(screenCursor[(unsigned int)(eepromViewIdx)])), mBuff1, 3));
 	clrEOL();
-
 }
 
 void goEEPROMview(void)
 {
-
 	prevMenuLevel = menuLevel;
 	doCursorMoveAbsolute(eepromViewIdx, 255);
-
 }
 
 #endif
 #ifdef useSavedTrips // Trip save/restore/raw data view support section
 void doCursorUpdateTripShow(void)
 {
-
 	paramPtr = (uint8_t)(getBaseTripPointer(tripShowSlot)) + screenCursor[(unsigned int)(tripShowScreenIdx)];
 	doParamRevert();
-
 }
 
 void doTripSaveDisplay(void)
 {
-
 	unsigned int t = getBaseTripPointer(tripShowSlot);
 	uint8_t b = (uint8_t)(eepromReadVal((unsigned int)(t + tripListSigPointer)));
 	uint8_t i = screenCursor[(unsigned int)(tripSaveScreenIdx)];
 	uint8_t j;
 
-	if (i == tslCount) j = tslSubSize;
+	if (i == tslCount) 
+	{
+		j = tslSubSize;
+	}
 	else
 	{
-
 		j = i;
 		i /= tslSubSize;
 		j -= i * tslSubSize;
 
 		i = pgm_read_byte(&tripSelectList[(unsigned int)(i)]);
-
 	}
 
 	printStr(tripNames, j); // print trip function name at top left
-	if (j < tslSubSize) printStr(bigFEDispChars, i);
+	if (j < tslSubSize)
+		printStr(bigFEDispChars, i);
 	clrEOL();
 	gotoXY(0, 1); // go to next line
 
 	charOut('0' + tripShowSlot);
 	charOut(':');
 
-	if (b == guinosig) print(format64(prgmFormatToTime, eepromReadVal(t), mBuff1, 3));
-	else printFlash(PSTR("Empty"));
+	if (b == guinosig)
+		print(format64(prgmFormatToTime, eepromReadVal(t), mBuff1, 3));
+	else
+		printFlash(PSTR("Empty"));
 
 	clrEOL();
-
 }
 
 void doTripShowDisplay(void)
 {
-
 	charOut('0' + tripShowSlot);
 	charOut(':');
 
 	uint8_t b = screenCursor[(unsigned int)(tripShowScreenIdx)];
 
-	if (b > 16) b -= 1;
-	else if (b > 3) b = b / 2 + 2;
+	if (b > 16)
+		b -= 1;
+	else if (b > 3)
+		b = b / 2 + 2;
 
 	printStr(ertvNames, b);
 
@@ -7534,96 +7531,85 @@ void doTripShowDisplay(void)
 	gotoXY(0, 1); // go to next line
 	print(pBuff);
 	clrEOL();
-
 }
 
 void doGoTripTank(void)
 {
-
 	goSavedTrip(0);
-
 }
 
 void doGoTripCurrent(void)
 {
-
 	goSavedTrip(1);
-
 }
 
 void goSavedTrip(uint8_t tripSlot)
 {
-
 	tripShowSlot = tripSlot;
 	prevMenuLevel = menuLevel;
 	doCursorMoveAbsolute(tripSaveScreenIdx, tripSlot * tslSubSize);
-
 }
 
 void doTripSelect(void)
 {
-
 	goTripSelect(0);
-
 }
 
 void doTripLongSelect(void)
 {
-
 	goTripSelect(1);
-
 }
 
 void goTripSelect(uint8_t pressFlag)
 {
-
 	uint8_t i = screenCursor[(unsigned int)tripSaveScreenIdx];
 	uint8_t j;
 
-	if (i == tslCount) doCursorMoveAbsolute(tripShowScreenIdx, 0);
+	if (i == tslCount)
+	{
+		doCursorMoveAbsolute(tripShowScreenIdx, 0);
+	}
 	else
 	{
-
 		j = i;
 		i /= tslSubSize;
 		j -= i * tslSubSize;
 
-		if ((j == 0) && (pressFlag == 0)) doCursorMoveAbsolute(prevMenuLevel, i + tripScreenIdxBase);
+		if ((j == 0) && (pressFlag == 0))
+		{
+			doCursorMoveAbsolute(prevMenuLevel, i + tripScreenIdxBase);
+		}
 		else
 		{
-
 			i = pgm_read_byte(&tripSelectList[(unsigned int)(i)]);
 
-			if ((j == 1) && (pressFlag == 1)) doTripSave(i);
-			else if ((j == 2) && (pressFlag == 1)) doTripLoad(i);
-			else if ((j == 3) && (pressFlag == 0)) doTripReset(i);
-			else doTripBumpSlot();
-
+			if ((j == 1) && (pressFlag == 1))
+				doTripSave(i);
+			else if ((j == 2) && (pressFlag == 1))
+				doTripLoad(i);
+			else if ((j == 3) && (pressFlag == 0))
+				doTripReset(i);
+			else
+				doTripBumpSlot();
 		}
-
 	}
-
 }
 
 void doTripSave(uint8_t tripIdx)
 {
-
 	tripArray[(unsigned int)(tripIdx)].save(tripShowSlot);
 	doTripPrintType(tripIdx);
 	printFlash(PSTR(" Save"));
-
 }
 
 void doTripLoad(uint8_t tripIdx)
 {
-
 	tripArray[(unsigned int)(tripIdx)].load(tripShowSlot);
 	doMainScreenDisplay();
 	gotoXY(0, 0);
 	doTripPrintType(tripIdx);
 	printFlash(PSTR(" Load"));
 	menuLevel = mainScreenIdx;
-
 }
 
 const uint8_t autoSaveInstr[] PROGMEM = {
@@ -7637,60 +7623,49 @@ const uint8_t autoSaveInstr[] PROGMEM = {
 
 uint8_t doTripAutoAction(uint8_t taaMode)
 {
-
 	uint8_t b;
 	uint8_t c = 0;
 
 	for (uint8_t x = 0; x < tslSize; x++)
 	{
-
 		if (eepromReadVal((unsigned int)(pgm_read_byte(&autoSaveInstr[(unsigned int)(x)]))))
 		{
-
 			b = pgm_read_byte(&tripSelectList[(unsigned int)(x)]);
 
-			if (taaMode) c += tripArray[(unsigned int)(b)].load(x);
-			else c += tripArray[(unsigned int)(b)].save(x);
-
+			if (taaMode)
+				c += tripArray[(unsigned int)(b)].load(x);
+			else
+				c += tripArray[(unsigned int)(b)].save(x);
 		}
-
 	}
 
 	return c;
-
 }
 
 void doTripReset(uint8_t tripIdx)
 {
-
 	tripArray[(unsigned int)tripIdx].reset();
 	doTripPrintType(tripIdx);
 	printFlash(PSTR(" Reset"));
-
 }
 
 void doTripPrintType(uint8_t tripIdx)
 {
-
 	printStr(bigFEDispChars, tripIdx);
 	printFlash(PSTR(" Trip "));
 	charOut('0' + tripShowSlot);
-
 }
 
 void doTripBumpSlot(void)
 {
-
 	tripShowSlot++;
-	if (tripShowSlot == eeAdrSavedTripsTemp3) tripShowSlot = 0;
-
+	if (tripShowSlot == eeAdrSavedTripsTemp3)
+		tripShowSlot = 0;
 }
 
 void doTripShowCancel(void)
 {
-
 	menuLevel = tripSaveScreenIdx;
-
 }
 
 #endif
@@ -7700,17 +7675,14 @@ uint8_t screenEditValue = 0;
 
 void doCursorUpdateScreenEdit(void)
 {
-
 	uint8_t b = screenCursor[(unsigned int)(screenEditIdx)] >> 1;
 
 	screenEditValue = displayFormats[(unsigned int)(b)] & dfValMask;
 	paramLength = (displayFormats[(unsigned int)(b)] & dfTripMask) >> dfBitShift;
-
 }
 
 void doScreenEditDisplay(void)
 {
-
 	uint8_t i = screenCursor[(unsigned int)(screenEditIdx)];
 	uint8_t j = i;
 	i >>= 1;
@@ -7725,54 +7697,44 @@ void doScreenEditDisplay(void)
 
 	for (uint8_t x = 0; x < 4; x++)
 	{
-
 		l = displayFormats[(unsigned int)(i++)];
 		m = 0;
 		n = 0;
 
 		if (x == k)
 		{
-
-			if (j == 1) m = 170;
-			else n = 170;
-
+			if (j == 1)
+				m = 170;
+			else
+				n = 170;
 		}
 
 		displayMainScreenFunction(x, l, m, n);
-
 	}
-
 }
 
 void doGoScreenEdit(void)
 {
-
 	prevMenuLevel = menuLevel;
 	doCursorMoveAbsolute(screenEditIdx, screenCursor[(unsigned int)(mainScreenIdx)] * displayPageCount);
-
 }
 
 void doScreenEditReturnToMain(void)
 {
-
 	doSaveScreen();
 	doReturnToMain();
-
 }
 
 void doScreenEditRevert(void)
 {
-
 	uint8_t b = screenCursor[(unsigned int)(screenEditIdx)] >> 1;
 
 	paramPtr = (uint8_t)(eePtrScreensStart) + b;
 	displayFormats[(unsigned int)(b)] = (uint8_t)(eepromReadVal((unsigned int)(paramPtr)));
-
 }
 
 void doScreenEditBump(void)
 {
-
 	uint8_t b = screenCursor[(unsigned int)(screenEditIdx)];
 	uint8_t c = b;
 	b &= 0x01;
@@ -7780,38 +7742,32 @@ void doScreenEditBump(void)
 
 	if (b)
 	{
-
 		screenEditValue++;
-		if (screenEditValue == dfMaxValDisplayCount) screenEditValue = 0;
-
+		if (screenEditValue == dfMaxValDisplayCount)
+			screenEditValue = 0;
 	}
 	else
 	{
-
 		paramLength++;
-		if (paramLength == dfMaxTripCount) paramLength = 0;
-
+		if (paramLength == dfMaxTripCount)
+			paramLength = 0;
 	}
 
 	displayFormats[(unsigned int)(c)] = (paramLength << dfBitShift) | screenEditValue;
-
 }
 
 void doSaveScreen(void)
 {
-
 	uint8_t b = screenCursor[(unsigned int)(screenEditIdx)] >> 1;
 
 	paramPtr = (uint8_t)(eePtrScreensStart) + b;
 	eepromWriteVal((unsigned int)(paramPtr), displayFormats[(unsigned int)(b)]);
-
 }
 
 #endif
 
 uint8_t loadParams(void)
 {
-
 	uint8_t b = 1;
 	uint8_t t;
 
@@ -7821,39 +7777,31 @@ uint8_t loadParams(void)
 	if (eepromReadVal((unsigned int)(eePtrSignature)) != newEEPROMsignature)
 #endif
 	{
-
 		b = 0;
 
 		eepromWriteVal((unsigned int)(eePtrSignature), newEEPROMsignature);
 
 		t = eePtrSettingsStart;
-		for (uint8_t x = 0; x < settingsSize; x++) eepromWriteVal((unsigned int)(t++), pgm_read_dword(&params[(unsigned int)(x)]));
-
+		for (uint8_t x = 0; x < settingsSize; x++)
+			eepromWriteVal((unsigned int)(t++), pgm_read_dword(&params[(unsigned int)(x)]));
 #ifdef useScreenEditor
 		t = eePtrScreensStart;
-		for (uint8_t x = 0; x < displayFormatSize; x++) eepromWriteVal((unsigned int)(t++), (unsigned long)(displayFormats[(unsigned int)(x)]));
-
-#endif
-#ifdef useScreenEditor
-
+		for (uint8_t x = 0; x < displayFormatSize; x++)
+			eepromWriteVal((unsigned int)(t++), (unsigned long)(displayFormats[(unsigned int)(x)]));
 	}
 	else
 	{
-
 		t = eePtrScreensStart;
 		for (uint8_t x = 0; x < displayFormatSize; x++) displayFormats[(unsigned int)(x)] = (uint8_t)(eepromReadVal((unsigned int)(t++)));
 #endif
-
 	}
 
 	initGuino();
 	return b;
-
 }
 
 uint8_t eepromWriteVal(unsigned int eePtr, unsigned long val)
 {
-
 	unsigned int t = eepromGetAddress(eePtr);
 	uint8_t l;
 	uint8_t w;
@@ -7866,27 +7814,21 @@ uint8_t eepromWriteVal(unsigned int eePtr, unsigned long val)
 
 	while (l > 0)
 	{
-
 		w = (uint8_t)(val & 0xFF);
 		if (w != eeprom_read_byte((uint8_t *)(--t)))
 		{
-
 			eeprom_write_byte((uint8_t *)(t), w);
 			s = 1;
-
 		}
 		val >>= 8;
 		l--;
-
 	}
 
 	return s;
-
 }
 
 unsigned long eepromReadVal(unsigned int eePtr)
 {
-
 	unsigned int t = eepromGetAddress(eePtr);
 
 	uint8_t l;
@@ -7898,54 +7840,43 @@ unsigned long eepromReadVal(unsigned int eePtr)
 
 	while (l > 0)
 	{
-
 		val <<= 8;
 		val += (unsigned long)(eeprom_read_byte((uint8_t *)(t)));
 		t++;
 		l--;
-
 	}
 
 	return val;
-
 }
 
 unsigned int eepromGetAddress(unsigned int eePtr)
 {
-
 	unsigned int t;
 	uint8_t l;
 
 	if (eePtr == eePtrSignature)
 	{
-
 		t = (unsigned int)(eeAdrSignature);
 		l = 3;
-
 	}
 	else if ((eePtr >= eePtrSettingsStart) && (eePtr < eePtrSettingsEnd))
 	{
-
 		eePtr -= eePtrSettingsStart;
 		t = (unsigned int)(pgm_read_byte(&paramAddrs[eePtr]));
 		l = pgm_read_byte(&paramAddrs[eePtr + 1]);
 		l -= (uint8_t)(t);
-
 #ifdef useScreenEditor
 	}
 	else if ((eePtr >= eePtrScreensStart) && (eePtr < eePtrScreensEnd))
 	{
-
 		eePtr -= eePtrScreensStart;
 		l = 1;
 		t = eePtr + eeAdrScreensStart;
-
 #endif
 #ifdef useSavedTrips
 	}
 	else if ((eePtr >= eePtrSavedTripsStart) && (eePtr < eePtrSavedTripsEnd))
 	{
-
 		eePtr -= eePtrSavedTripsStart;
 		l = (uint8_t)(eePtr / tripListSize);
 		eePtr -= (unsigned int)(l) * (unsigned int)(tripListSize);
@@ -7954,28 +7885,21 @@ unsigned int eepromGetAddress(unsigned int eePtr)
 
 		if ((eePtr > 0) && (eePtr < tripListSigPointer))
 		{
-
 			l = 4;
 			t += 4 * (unsigned int)(eePtr - 1);
 			t++;
-
 		}
 		else
 		{
-
 			if (eePtr > 0) t += (unsigned int)(eepromTripListSize - 1);
 			l = 1;
-
 		}
 #endif
-
 	}
 	else
 	{
-
 		l = 0;
 		t = 0;
-
 	}
 
 	t <<= 3;
@@ -7983,20 +7907,16 @@ unsigned int eepromGetAddress(unsigned int eePtr)
 	t += (unsigned int)(l);
 
 	return t;
-
 }
 
 void callFuncPointer(const uint8_t * funcIdx)
 {
-
 	pFunc mainFunc = (pFunc)pgm_read_word(&funcPointers[(unsigned int)(pgm_read_byte(funcIdx))]); // go perform action
 	mainFunc();
-
 }
 
 unsigned long cycles2(void)
 {
-
 	unsigned long t;
 
 	uint8_t oldSREG = SREG; // save state of interrupt flag
@@ -8004,32 +7924,32 @@ unsigned long cycles2(void)
 	cli(); // disable interrupts
 #ifdef TinkerkitLCDmodule
 	t = timer2_overflow_count + TCNT0; // do a microSeconds() - like read to determine loop length in cycles
-	if (TIFR0 & (1 << TOV0)) t = timer2_overflow_count + 256 + TCNT0; // if overflow occurred, re-read with overflow flag taken into account
+	if (TIFR0 & (1 << TOV0))
+		t = timer2_overflow_count + 256 + TCNT0; // if overflow occurred, re-read with overflow flag taken into account
 #else
 	t = timer2_overflow_count + TCNT2; // do a microSeconds() - like read to determine loop length in cycles
-	if (TIFR2 & (1 << TOV2)) t = timer2_overflow_count + 256 + TCNT2; // if overflow occurred, re-read with overflow flag taken into account
+	if (TIFR2 & (1 << TOV2))
+		t = timer2_overflow_count + 256 + TCNT2; // if overflow occurred, re-read with overflow flag taken into account
 #endif
 	SREG = oldSREG; // restore state of interrupt flag
 
 	return t;
-
 }
 
 unsigned long findCycleLength(unsigned long lastCycle, unsigned long thisCycle)
 {
-
 	unsigned long t;
 
-	if (thisCycle < lastCycle) t = 4294967295ul - lastCycle + thisCycle + 1;
-	else t = thisCycle - lastCycle;
+	if (thisCycle < lastCycle)
+		t = 4294967295ul - lastCycle + thisCycle + 1;
+	else
+		t = thisCycle - lastCycle;
 
 	return t;
-
 }
 
 int main(void)
 {
-
 	uint8_t i;
 	uint8_t j;
 
@@ -8059,7 +7979,7 @@ int main(void)
 #ifndef useAnalogRead
 	ADMUX = (1 << REFS0); // set ADC voltage reference to AVCC, and right-adjust the ADC reading
 #endif
-	 // enable ADC, enable ADC interrupt, clear any pending ADC interrupt, and set frequency to 1/128 of system timer
+	// enable ADC, enable ADC interrupt, clear any pending ADC interrupt, and set frequency to 1/128 of system timer
 	ADCSRA = ((1 << ADEN) | (1 << ADSC) | (1 << ADATE) | (1 << ADIF) | (1 << ADIE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0));
 	ADCSRB = 0; // disable analog comparator multiplexer, and set ADC auto trigger source to free-running mode
 #ifdef useLegacyButtons
