@@ -48,7 +48,7 @@
  */
 
 //#define useLegacyLCDinvertedBrightness true	/* For alternate LCD backlight connections */
-//#define useLegacyLCDbuffered true		/* Speed up LCD output */
+#define useLegacyLCDbuffered true		/* Speed up LCD output */
 
 /*
  * selectable options - all may be chosen independently of one another,
@@ -92,6 +92,7 @@
 //#define useSWEET64trace true			/* Ability to view real-time 64-bit calculations from SWEET64 kernel */
 //#define useSWEET64multDiv true		/* shift mul64 and div64 from native C++ to SWEET64 bytecode */
 
+
 /*
  * Initial settings values, these will be set on device flash.
  * Than can be changed by user.
@@ -112,9 +113,9 @@
 /* Fuel Injector Rated Capacity in mL/min */
 #define DEFAULT_INJ_CAP		240
 /* Microseconds per (gal or L) */
-#define DEFAULT_MSPG		15500000
+#define DEFAULT_MSPG		62500000
 /* Fuel Injector Response Delay Time (us) */
-#define DEFAULT_INJ_RESP	550
+#define DEFAULT_INJ_RESP	200
 /* VSS Pulses (per mile or per km) */
 #define DEFAULT_VSS_PULSES	5008
 /* VSS Pause Debounce Count (ms) */
@@ -175,6 +176,7 @@
 #define DEFAULT_PRICE		3799
 /* Scratchpad Memory */
 #define DEFAULT_MEM		0
+
 
 /*
  * these #defines are used to select various features to support the above
