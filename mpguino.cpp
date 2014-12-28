@@ -1284,72 +1284,73 @@ const uint8_t paramAddrs[] PROGMEM = {
 	(uint8_t)(eeAdrSettingsStart) + pOffsetZZ,				// Start address of next EEPROM logical block
 };
 
+/* default settings values, for description see configure.h */
 const uint32_t params[] PROGMEM = {
 #ifdef useLegacyLCD
-	55,							// LCD Contrast
+	DEFAULT_LCD_CON,
 #endif
-	0,							// Display Mode (0 - US Display, 1 - Metric Display)
-	0,							// Fuel Injector Edge Trigger (0 - Falling Edge, 1 - Rising Edge)
+	DEFAULT_LCD_MOD,
+	DEFAULT_INJ_EDGE,
 #ifdef useIsqrt
-	58015,							// Fuel System Pressure * 1000 (psig or Pa)
+	DEFAULT_PRESS_FUEL,
 #endif
 #ifdef useCalculatedFuelFactor
-	58015,							// Reference Fuel Injector Rated Pressure * 1000 (psig or Pa)
-	6,							// Fuel Injector Count
-	284,							// Fuel Injector Rated Capacity in mL/min
+	DEFAULT_PRESS_REF,
+	DEFAULT_INJ_CNT,
+	DEFAULT_INJ_CAP,
 #endif
-	133262651,						// Microseconds per (gal or L)
-	550,							// Fuel Injector Response Delay Time (us)
-	10000,							// VSS Pulses (per mile or per km)
-	2,							// VSS Pause Debounce Count (ms)
-	2,							// Crankshaft Revolutions per Fuel Injector Event
-	100,							// Minimum Engine Speed For Engine On (RPM)
-	18000,							// Tank Capacity * 1000 (gal or L)
+	DEFAULT_MSPG,
+	DEFAULT_INJ_RESP,
+	DEFAULT_VSS_PULSES,
+	DEFAULT_VSS_PAUSE,
+	DEFAULT_INJ_RPM,
+	DEFAULT_MIN_RPM,
+	DEFAULT_TANK_CAP,
 #ifdef useChryslerMAPCorrection
-	0,							// MAP Sensor Floor * 1000 (mV)
-	0,							// Barometric Sensor Floor * 1000 (mV)
-	4500,							// MAP Sensor Ceiling * 1000 (mV)
-	4500,							// Barometric Sensor Ceiling * 1000 (mV)
-	14270,							// MAP Sensor Range * 1000 (psig or kPa)
-	0,							// Barometric Sensor Range * 1000 (psig or kPa)
-	551,							// MAP Sensor Offset * 1000 (psig or kPa)
-	14696,							// Barometric Sensor Offset * 1000 (psig or kPa)
+	DEFAULT_MAP_FLOOR,
+	DEFAULT_BAR_FLOOR,
+	DEFAULT_MAP_CEIL,
+	DEFAULT_BAR_CEIL,
+	DEFAULT_MAP_RANGE,
+	DEFAULT_BAR_RANGE,
+	DEFAULT_MAP_OFFSET,
+	DEFAULT_BAR_OFFSET,
 #endif
 #ifdef useVehicleMass
-	4000,							// Vehicle Weight/Mass (lbs or kg)
+	DEFAULT_VEIGHT,	
 #endif
 #ifdef useCoastDownCalculator
-	25400,							// Vehicle Frontal Area (ft^2 or m^2)
-	2065,							// Air density (lb/yd^3 or kg/m^3)
-	346,							// C(d)
-	1,							// C(v)
-	8,							// C(rr)
+	DEFAULT_AREA,
+	DEFAULT_AIR_DENS,
+	DEFAULT_CD,
+	DEFAULT_CV,
+	DEFAULT_CRR,
 #endif
-	120,							// Activity Timeout (s)
-	1,							// Enable current trip reset upon wakeup
+	DEFAULT_TIMEOUT,
+	DEFAULT_CUR_RESET,
 #ifdef useSerialPortDataLogging
-	1,							// Serial Data Logging Enable
+	DEFAULT_SERIAL,
 #endif
 #ifdef useWindowFilter
-	1,							// Window Filter Enable
+	DEFAULT_WIN_FILTER,
 #endif
 #ifdef useBarFuelEconVsTime
-	5,							// Length Of BarGraph Bar (s)
+	DEFAULT_BARGRAPH_LEN,
 #endif
 #ifdef useSavedTrips
-	1,							// Autosave Active Trip Data Enable
+	DEFAULT_AUTOSAVE_TRIP,
 #ifdef trackIdleEOCdata
-	1,							// Autosave Idle Trip Data Enable
+	DEFAULT_AUTOSAVE_IDLE,
 #endif
 #endif
 #ifdef useBarFuelEconVsSpeed
-	25000,							// FE vs Speed Bargraph lower speed
-	5000,							// FE vs Speed Bargraph speed bar size
+	DEFAULT_FES_LOW,
+	DEFAULT_FES_SIZE,
 #endif
 #ifdef useFuelCost
-	3799,							// Price per unit volume of fuel
+	DEFAULT_PRICE,
 #endif
-	0,							// Scratchpad Memory
+	DEFAULT_MEM,
 };
 
 const uint8_t settingsSize = (sizeof(params) / sizeof(uint32_t));
