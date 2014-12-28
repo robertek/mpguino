@@ -342,25 +342,30 @@ const uint8_t idxDoParamSave =				idxDoParamChangeDigit + 1;
 const uint8_t idxDoParamStoreMin =			idxDoParamSave + 1;
 const uint8_t idxDoParamStoreMax =			idxDoParamStoreMin + 1;
 const uint8_t idxDoParamRevert =			idxDoParamStoreMax + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDoParamRevert
 #ifdef useCPUreading
 const uint8_t idxDoDisplaySystemInfo =			nextAllowedValue + 1;
 const uint8_t idxDoShowCPU =				idxDoDisplaySystemInfo + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDoShowCPU
 #endif
 #ifdef useBigFE
 const uint8_t idxDoCursorUpdateBigFEscreen =		nextAllowedValue + 1;
 const uint8_t idxDoBigFEdisplay =			idxDoCursorUpdateBigFEscreen + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDoBigFEdisplay
 #endif
 #ifdef useBigDTE
 const uint8_t idxDoCursorUpdateBigDTEscreen =		nextAllowedValue + 1;
 const uint8_t idxDoBigDTEdisplay =			idxDoCursorUpdateBigDTEscreen + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDoBigDTEdisplay
 #endif
 #ifdef useBigTTE
 const uint8_t idxDoCursorUpdateBigTTEscreen =		nextAllowedValue + 1;
 const uint8_t idxDoBigTTEdisplay =			idxDoCursorUpdateBigTTEscreen + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDoBigTTEdisplay
 #endif
 #ifdef useClock
@@ -371,6 +376,7 @@ const uint8_t idxDoEditSystemTimeDisplay =		idxDoGoEditSystemTime + 1;
 const uint8_t idxDoEditSystemTimeCancel =		idxDoEditSystemTimeDisplay + 1;
 const uint8_t idxDoEditSystemTimeChangeDigit =		idxDoEditSystemTimeCancel + 1;
 const uint8_t idxDoEditSystemTimeSave =			idxDoEditSystemTimeChangeDigit + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDoEditSystemTimeSave
 #endif
 #ifdef useSavedTrips
@@ -383,6 +389,7 @@ const uint8_t idxDoTripBumpSlot =			idxDoGoTripTank + 1;
 const uint8_t idxDoTripSelect =				idxDoTripBumpSlot + 1;
 const uint8_t idxDoTripLongSelect =			idxDoTripSelect + 1;
 const uint8_t idxDoTripShowCancel =			idxDoTripLongSelect + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDoTripShowCancel
 #endif
 #ifdef useScreenEditor
@@ -393,26 +400,31 @@ const uint8_t idxDoScreenEditRevert =			idxDoScreenEditReturnToMain + 1;
 const uint8_t idxDoSaveScreen =				idxDoScreenEditRevert + 1;
 const uint8_t idxDoScreenEditBump =			idxDoSaveScreen + 1;
 const uint8_t idxDoCursorUpdateScreenEdit =		idxDoScreenEditBump + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDoCursorUpdateScreenEdit
 #endif
 #ifdef useBarFuelEconVsTime
 const uint8_t idxDoCursorUpdateBarFEvT =		nextAllowedValue + 1;
 const uint8_t idxDoBarFEvTdisplay =			idxDoCursorUpdateBarFEvT + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDoBarFEvTdisplay
 #endif
 #ifdef useBarFuelEconVsSpeed
 const uint8_t idxDoCursorUpdateBarFEvS =		nextAllowedValue + 1;
 const uint8_t idxDoBarFEvSdisplay =			idxDoCursorUpdateBarFEvS + 1;
 const uint8_t idxDoResetBarFEvS =			idxDoBarFEvSdisplay + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDoResetBarFEvS
 #endif
 #ifdef useBenchMark
 const uint8_t idxDoBenchMark =				nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDoBenchMark
 #endif
 #ifdef useEEPROMviewer
 const uint8_t idxDoEEPROMviewDisplay =			nextAllowedValue + 1;
 const uint8_t idxGoEEPROMview =				idxDoEEPROMviewDisplay + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxGoEEPROMview
 #endif
 
@@ -440,6 +452,7 @@ const uint8_t tInjectorTotalTime =	tInjectorOpenTime + 1;
 const uint8_t tVSStotalTime =		tInjectorTotalTime + 1;
 const uint8_t tInjectorPulseCount =	tVSStotalTime + 1;
 const uint8_t tVSSpulseCount =		tInjectorPulseCount + 1;
+#undef nextAllowedValue
 #define nextAllowedValue tVSSpulseCount
 #ifdef useFuelCost
 const uint8_t tFuelCost =		nextAllowedValue + 1;
@@ -447,6 +460,7 @@ const uint8_t tFuelRateCost =		tFuelCost + 1;
 const uint8_t tFuelCostPerDistance =	tFuelRateCost + 1;
 const uint8_t tDistancePerFuelCost =	tFuelCostPerDistance + 1;
 const uint8_t tFuelCostRemaining =	tDistancePerFuelCost + 1;
+#undef nextAllowedValue
 #define nextAllowedValue tFuelCostRemaining
 #endif
 const uint8_t dfMaxValCount =		nextAllowedValue + 1;
@@ -455,15 +469,18 @@ const uint8_t dfMaxValCount =		nextAllowedValue + 1;
 const uint8_t tAnalogChannel0 =		nextAllowedValue + 1;
 const uint8_t tAnalogChannel1 =		tAnalogChannel0 + 1;
 const uint8_t tAnalogChannel2 =		tAnalogChannel1 + 1;
+#undef nextAllowedValue
 #define nextAllowedValue tAnalogChannel2
 #else
 const uint8_t tAnalogChannel0 =		nextAllowedValue + 1;
 const uint8_t tAnalogChannel1 =		tAnalogChannel0 + 1;
+#undef nextAllowedValue
 #define nextAllowedValue tAnalogChannel1
 #ifdef useAnalogButtons
 const uint8_t tAnalogChannel2 =		nextAllowedValue + 1;
 const uint8_t tAnalogChannel3 =		tAnalogChannel2 + 1;
 const uint8_t tAnalogChannel4 =		tAnalogChannel3 + 1;
+#undef nextAllowedValue
 #define nextAllowedValue tAnalogChannel4
 #endif
 #endif
@@ -475,6 +492,7 @@ const uint8_t tPressureChannel1 =	tPressureChannel0 + 1;
 const uint8_t tPressureChannel2 =	tPressureChannel1 + 1;
 const uint8_t tPressureChannel3 =	tPressureChannel2 + 1;
 const uint8_t tCorrectionFactor =	tPressureChannel3 + 1;
+#undef nextAllowedValue
 #define nextAllowedValue tCorrectionFactor
 const uint8_t dfMaxValMAPCount = nextAllowedValue + 1;
 #endif
@@ -550,31 +568,37 @@ const uint8_t rawIdx = 				0;
 const uint8_t instantIdx = 			rawIdx + 1;
 const uint8_t currentIdx = 			instantIdx + 1;
 const uint8_t tankIdx = 			currentIdx + 1;
+#undef nextAllowedValue
 #define nextAllowedValue tankIdx
 #ifdef trackIdleEOCdata
 const uint8_t rawIdleIdx = 			nextAllowedValue + 1;
 const uint8_t eocIdleInstantIdx = 		rawIdleIdx + 1;
 const uint8_t eocIdleCurrentIdx = 		eocIdleInstantIdx + 1;
 const uint8_t eocIdleTankIdx = 			eocIdleCurrentIdx + 1;
+#undef nextAllowedValue
 #define nextAllowedValue eocIdleTankIdx
 #endif
 #ifdef useBarFuelEconVsTime
 const uint8_t periodIdx = 			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue periodIdx
 #endif
 #ifdef useBarFuelEconVsSpeed
 const uint8_t FEvsSpeedIdx = 			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue (FEvsSpeedIdx + bgDataSize - 1)
 #endif
 #ifdef useCoastDownCalculator
 const uint8_t thisCoastDownIdx = 		nextAllowedValue + 1;
 const uint8_t lastCoastDownIdx = 		thisCoastDownIdx + 1;
+#undef nextAllowedValue
 #define nextAllowedValue lastCoastDownIdx
 #endif
 #ifdef useWindowFilter
 const uint8_t windowFilterSize = 4;
 const uint8_t windowFilterElemIdx = 		nextAllowedValue + 1;
 const uint8_t windowFilterSumIdx = 		windowFilterElemIdx + windowFilterSize;
+#undef nextAllowedValue
 #define nextAllowedValue windowFilterSumIdx
 #endif
 const uint8_t tripSlotCount = 			nextAllowedValue + 1;
@@ -824,13 +848,16 @@ const uint8_t cgramBigNum = 1;
 #define EuB7 (1 << 7)
 
 #ifdef useSavedTrips
+#undef EuB7
 #define EuB7 0
 #ifdef trackIdleEOCdata
+#undef EuB6
 #define EuB6 0
 #endif
 #endif
 
 #ifdef useScreenEditor
+#undef EuB5
 #define EuB5 0
 #endif
 
@@ -844,22 +871,27 @@ const unsigned int eeAdrSettingsStart = 3;
 
 // start of remarkably long EEPROM stored settings section
 
+#undef nextAllowedValue
 #define nextAllowedValue (uint8_t)(eePtrSettingsStart - 1)
 #ifdef useLegacyLCD
 const uint8_t pContrastIdx =			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pContrastIdx
 #endif
 const uint8_t pMetricFlagIdx =			nextAllowedValue + 1;
 const uint8_t pInjEdgeTriggerIdx =		pMetricFlagIdx + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pInjEdgeTriggerIdx
 #ifdef useIsqrt
 const uint8_t pSysFuelPressureIdx =		nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pSysFuelPressureIdx
 #endif
 #ifdef useCalculatedFuelFactor
 const uint8_t pRefFuelPressureIdx =		nextAllowedValue + 1;
 const uint8_t pInjectorCountIdx =		pRefFuelPressureIdx + 1;
 const uint8_t pInjectorSizeIdx =		pInjectorCountIdx + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pInjectorSizeIdx
 #endif
 const uint8_t pMicroSecondsPerQuantityIdx =	nextAllowedValue + 1;
@@ -869,6 +901,7 @@ const uint8_t pVSSpauseIdx =			pPulsesPerDistanceIdx + 1;
 const uint8_t pCrankRevPerInjIdx =		pVSSpauseIdx + 1;
 const uint8_t pMinGoodRPMidx =			pCrankRevPerInjIdx + 1;
 const uint8_t pTankSizeIdx =			pMinGoodRPMidx + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pTankSizeIdx
 #ifdef useChryslerMAPCorrection
 const uint8_t pMAPsensorFloorIdx =		nextAllowedValue + 1;
@@ -879,10 +912,12 @@ const uint8_t pMAPsensorRangeIdx =		pBaroSensorCeilingIdx + 1;
 const uint8_t pBaroSensorRangeIdx =		pMAPsensorRangeIdx + 1;
 const uint8_t pMAPsensorOffsetIdx =		pBaroSensorRangeIdx + 1;
 const uint8_t pBaroSensorOffsetIdx =		pMAPsensorOffsetIdx + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pBaroSensorOffsetIdx
 #endif
 #ifdef useVehicleMass
 const uint8_t pVehicleMassIdx =			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pVehicleMassIdx
 #endif
 #ifdef useCoastDownCalculator
@@ -891,38 +926,47 @@ const uint8_t pLocustDensityIdx =		pVehicleFrontalAreaIdx + 1;
 const uint8_t pCoefficientDidx =		pLocustDensityIdx + 1;
 const uint8_t pCoefficientVidx =		pCoefficientDidx + 1;
 const uint8_t pCoefficientRRidx =		pCoefficientVidx + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pCoefficientRRidx
 #endif
 const uint8_t pActivityTimeoutIdx =		nextAllowedValue + 1;
 const uint8_t pWakupResetCurrentIdx =		pActivityTimeoutIdx + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pWakupResetCurrentIdx
 #ifdef useSerialPortDataLogging
 const uint8_t pSerialDataLoggingIdx =		nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pSerialDataLoggingIdx
 #endif
 #ifdef useWindowFilter
 const uint8_t pWindowFilterIdx =		nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pWindowFilterIdx
 #endif
 #ifdef useBarFuelEconVsTime
 const uint8_t pFEvsTimeIdx =			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pFEvsTimeIdx
 #endif
 #ifdef useSavedTrips
 const uint8_t pAutoSaveActiveIdx =		nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pAutoSaveActiveIdx
 #ifdef trackIdleEOCdata
 const uint8_t pAutoSaveIdleIdx =		nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pAutoSaveIdleIdx
 #endif
 #endif
 #ifdef useBarFuelEconVsSpeed
 const uint8_t pBarLowSpeedCutoffIdx =		nextAllowedValue + 1;
 const uint8_t pBarSpeedQuantumIdx =		pBarLowSpeedCutoffIdx + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pBarSpeedQuantumIdx
 #endif
 #ifdef useFuelCost
 const uint8_t pCostPerQuantity =		nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue pCostPerQuantity
 #endif
 const uint8_t pScratchpadIdx = 			nextAllowedValue + 1;
@@ -1131,22 +1175,27 @@ const uint8_t paramsLength[] PROGMEM = {
 
 #define byteSize(bitLength) ((((bitLength & 0x07) != 0)? 1 : 0) + (bitLength / 8))
 
+#undef nextAllowedValue
 #define nextAllowedValue 0
 #ifdef useLegacyLCD
 const uint8_t pOffsetContrast = 		nextAllowedValue;
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetContrast + byteSize(pSizeContrast)
 #endif
 const uint8_t pOffsetMetricFlag = 		nextAllowedValue;
 const uint8_t pOffsetInjEdgeTrigger = 		pOffsetMetricFlag + byteSize(pSizeMetricFlag);
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetInjEdgeTrigger + byteSize(pSizeInjEdgeTrigger)
 #ifdef useIsqrt
 const uint8_t pOffsetSysFuelPressure = 		nextAllowedValue;
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetSysFuelPressure + byteSize(pSizeSysFuelPressure)
 #endif
 #ifdef useCalculatedFuelFactor
 const uint8_t pOffsetRefFuelPressure = 		nextAllowedValue;
 const uint8_t pOffsetInjectorCount = 		pOffsetRefFuelPressure + byteSize(pSizeRefFuelPressure);
 const uint8_t pOffsetInjectorSize = 		pOffsetInjectorCount + byteSize(pSizeInjectorCount);
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetInjectorSize + byteSize(pSizeInjectorSize)
 #endif
 const uint8_t pOffsetMicroSecondsPerQuantity =	nextAllowedValue;
@@ -1156,6 +1205,7 @@ const uint8_t pOffsetVSSpause =			pOffsetPulsesPerDistance + byteSize(pSizePulse
 const uint8_t pOffsetCrankRevPerInj =		pOffsetVSSpause + byteSize(pSizeVSSpause);
 const uint8_t pOffsetMinGoodRPM =		pOffsetCrankRevPerInj + byteSize(pSizeCrankRevPerInj);
 const uint8_t pOffsetTankSize =			pOffsetMinGoodRPM + byteSize(pSizeMinGoodRPM);
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetTankSize + byteSize(pSizeTankSize)
 #ifdef useChryslerMAPCorrection
 const uint8_t pOffsetMAPsensorFloor =		nextAllowedValue;
@@ -1166,10 +1216,12 @@ const uint8_t pOffsetMAPsensorRange =		pOffsetBaroSensorCeiling + byteSize(pSize
 const uint8_t pOffsetBaroSensorRange =		pOffsetMAPsensorRange + byteSize(pSizeMAPsensorRange);
 const uint8_t pOffsetMAPsensorOffset =		pOffsetBaroSensorRange + byteSize(pSizeBaroSensorRange);
 const uint8_t pOffsetBaroSensorOffset =		pOffsetMAPsensorOffset + byteSize(pSizeMAPsensorOffset);
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetBaroSensorOffset + byteSize(pSizeBaroSensorOffset)
 #endif
 #ifdef useVehicleMass
 const uint8_t pOffsetVehicleMass =		nextAllowedValue;
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetVehicleMass + byteSize(pSizeVehicleMass)
 #endif
 #ifdef useCoastDownCalculator
@@ -1178,38 +1230,47 @@ const uint8_t pOffsetLocustDensity =		pOffsetVehicleFrontalArea + byteSize(pSize
 const uint8_t pOffsetCoefficientD =		pOffsetLocustDensity + byteSize(pSizeLocustDensity);
 const uint8_t pOffsetCoefficientV =		pOffsetCoefficientD + byteSize(pSizeCoefficientD);
 const uint8_t pOffsetCoefficientRR =		pOffsetCoefficientV + byteSize(pSizeCoefficientV);
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetCoefficientRR + byteSize(pSizeCoefficientRR)
 #endif
 const uint8_t pOffsetActivityTimeout =		nextAllowedValue;
 const uint8_t pOffsetWakupResetCurrent =	pOffsetActivityTimeout + byteSize(pSizeActivityTimeout);
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetWakupResetCurrent + byteSize(pSizeWakupResetCurrent)
 #ifdef useSerialPortDataLogging
 const uint8_t pOffsetSerialDataLogging =	nextAllowedValue;
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetSerialDataLogging + byteSize(pSizeSerialDataLogging)
 #endif
 #ifdef useWindowFilter
 const uint8_t pOffsetWindowFilter =		nextAllowedValue;
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetWindowFilter + byteSize(pSizeWindowFilter)
 #endif
 #ifdef useBarFuelEconVsTime
 const uint8_t pOffsetFEvsTime =			nextAllowedValue;
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetFEvsTime + byteSize(pSizeFEvsTime)
 #endif
 #ifdef useSavedTrips
 const uint8_t pOffsetAutoSaveActive =		nextAllowedValue;
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetAutoSaveActive + byteSize(pSizeAutoSaveActive)
 #ifdef trackIdleEOCdata
 const uint8_t pOffsetAutoSaveIdle =		nextAllowedValue;
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetAutoSaveIdle + byteSize(pSizeAutoSaveIdle)
 #endif
 #endif
 #ifdef useBarFuelEconVsSpeed
 const uint8_t pOffsetBarLowSpeedCutoff =	nextAllowedValue;
 const uint8_t pOffsetBarSpeedQuantumIdx =	pOffsetBarLowSpeedCutoff + byteSize(pSizeBarLowSpeedCutoff);
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetBarSpeedQuantumIdx + byteSize(pSizeBarSpeedQuantumIdx)
 #endif
 #ifdef useFuelCost
 const uint8_t pOffsetFuelUnitCost =		nextAllowedValue;
+#undef nextAllowedValue
 #define nextAllowedValue pOffsetFuelUnitCost + byteSize(pSizeFuelUnitCost)
 #endif
 const uint8_t pOffsetScratchpad =		nextAllowedValue;
@@ -1362,6 +1423,7 @@ const unsigned int eeAdrSettingsEnd = eeAdrSettingsStart + (unsigned int)(pOffse
 
 const unsigned long newEEPROMsignature = ((unsigned long)(guinosig) << 16) + ((unsigned long)(settingsSize) << 8) + (unsigned long)(EEPROMusage);
 
+#undef nextAllowedValue
 #define nextAllowedValue eePtrSettingsEnd
 #define nextAllowedValue2 eeAdrSettingsEnd
 #ifdef useScreenEditor
@@ -1369,6 +1431,8 @@ const unsigned int eePtrScreensStart = nextAllowedValue;
 const unsigned int eeAdrScreensStart = nextAllowedValue2;
 const unsigned int eePtrScreensEnd = eePtrScreensStart + (unsigned int)(displayFormatSize);
 const unsigned int eeAdrScreensEnd = eeAdrScreensStart + (unsigned int)(displayFormatSize);
+#undef nextAllowedValue
+#undef nextAllowedValue2
 #define nextAllowedValue eePtrScreensEnd
 #define nextAllowedValue2 eeAdrScreensEnd
 #endif
@@ -1380,6 +1444,8 @@ const uint8_t eeAdrSavedTripsTemp2 = (uint8_t)(eeAdrSavedTripsTemp1 / (unsigned 
 const uint8_t eeAdrSavedTripsTemp3 = ((tripSaveSlotCount > eeAdrSavedTripsTemp2) ? eeAdrSavedTripsTemp2 : tripSaveSlotCount);
 const unsigned int eePtrSavedTripsEnd = eePtrSavedTripsStart + (unsigned int)(tripListSize) * (unsigned int)(eeAdrSavedTripsTemp3);
 const unsigned int eeAdrSavedTripsEnd = eeAdrSavedTripsStart + (unsigned int)(eepromTripListSize) * (unsigned int)(eeAdrSavedTripsTemp3);
+#undef nextAllowedValue
+#undef nextAllowedValue2
 #define nextAllowedValue eePtrSavedTripsEnd
 #define nextAllowedValue2 eeAdrSavedTripsEnd
 #endif
@@ -1452,7 +1518,7 @@ const uint8_t decimalPtChar = 46;
 #define allTurnedOn 0x0C
 #else
 const uint8_t decimalPtChar = 0x0C;
-#define allTurnedOn 255
+#define allTurnedOn 0x7F
 #endif
 const char bigNumChars1[] PROGMEM = {
 	0x0E, 0x08, 0x0F, 0,
@@ -1759,30 +1825,36 @@ const uint8_t idxNumber5nines = idxNumber6nines + 1;
 const uint8_t idxNumber500 = idxNumber5nines + 1;
 const uint8_t idxNumber50 = idxNumber500 + 1;
 const uint8_t idxNumber5 = idxNumber50 + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxNumber5
 #ifdef useCPUreading
 const uint8_t idxNumerCPUutil = nextAllowedValue + 1;
 const uint8_t idxDenomCPUutil = idxNumerCPUutil + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDenomCPUutil
 #endif
 #ifdef useClock
 const uint8_t idxSecondsPerDay = nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxSecondsPerDay
 #endif
 #ifdef useIsqrt
 const uint8_t idxNumerPressure = nextAllowedValue + 1;
 const uint8_t idxDenomPressure = idxNumerPressure + 1;
 const uint8_t idxCorrFactor = idxDenomPressure + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxCorrFactor
 #endif
 #ifdef useAnalogRead
 const uint8_t idxNumerVoltage = nextAllowedValue + 1;
 const uint8_t idxDenomVoltage = idxNumerVoltage + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDenomVoltage
 #endif
 #ifdef useVehicleMass
 const uint8_t idxNumerMass = nextAllowedValue + 1;
 const uint8_t idxDenomMass = idxNumerMass + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDenomMass
 #endif
 #ifdef useCoastDownCalculator
@@ -1790,6 +1862,7 @@ const uint8_t idxNumerArea = nextAllowedValue + 1;
 const uint8_t idxDenomArea = idxNumerArea + 1;
 const uint8_t idxNumerDensity = idxDenomArea + 1;
 const uint8_t idxDenomDensity = idxNumerDensity + 1;
+#undef nextAllowedValue
 #define nextAllowedValue idxDenomDensity
 #endif
 
@@ -1868,26 +1941,32 @@ const uint8_t DNUISinstrJump = 				DNUISinstrCall + 1;
 const uint8_t DNUISinstrSwap = 				DNUISinstrJump + 1;
 const uint8_t DNUISinstrSubYfromX = 			DNUISinstrSwap + 1;
 const uint8_t DNUISinstrAddYtoX = 			DNUISinstrSubYfromX + 1;
+#undef nextAllowedValue
 #define nextAllowedValue DNUISinstrAddYtoX
 #ifndef useSWEET64multDiv
 const uint8_t DNUISinstrMulXbyY = 			DNUISinstrAddYtoX + 1;
 const uint8_t DNUISinstrDivXbyY = 			DNUISinstrMulXbyY + 1;
+#undef nextAllowedValue
 #define nextAllowedValue DNUISinstrDivXbyY
 #endif
 const uint8_t DNUISinstrShiftLeft = 			nextAllowedValue + 1;
 const uint8_t DNUISinstrShiftRight = 			DNUISinstrShiftLeft + 1;
 const uint8_t DNUISinstrAddToIndex = 			DNUISinstrShiftRight + 1;
+#undef nextAllowedValue
 #define nextAllowedValue DNUISinstrAddToIndex
 #ifdef useIsqrt
 const uint8_t DNUISinstrIsqrt = 			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue DNUISinstrIsqrt
 #endif
 #ifdef useAnalogRead
 const uint8_t DNUISinstrLdVoltage = 			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue DNUISinstrLdVoltage
 #endif
 #ifdef useChryslerMAPCorrection
 const uint8_t DNUISinstrLdPressure = 			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue DNUISinstrLdPressure
 #endif
 
@@ -2804,39 +2883,48 @@ const uint8_t bpListEEPROMview[] PROGMEM = {
 const uint8_t bpIdxMain =	0;
 const uint8_t bpIdxSetting =	bpIdxMain + 1;
 const uint8_t bpIdxParam =	bpIdxSetting + 1;
+#undef nextAllowedValue
 #define nextAllowedValue bpIdxParam
 #ifdef useCPUreading
 const uint8_t bpIdxCPUmonitor =	nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue bpIdxCPUmonitor
 #endif
 #ifdef useBigNumberDisplay
 const uint8_t bpIdxBigNum =	nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue bpIdxBigNum
 #endif
 #ifdef useBarFuelEconVsTime
 const uint8_t bpIdxBFET =	nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue bpIdxBFET
 #endif
 #ifdef useBarFuelEconVsSpeed
 const uint8_t bpIdxBFES =	nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue bpIdxBFES
 #endif
 #ifdef useClock
 const uint8_t bpIdxTime =	nextAllowedValue + 1;
 const uint8_t bpIdxClockEdit =	bpIdxTime + 1;
+#undef nextAllowedValue
 #define nextAllowedValue bpIdxClockEdit
 #endif
 #ifdef useSavedTrips
 const uint8_t bpIdxTripSave =	nextAllowedValue + 1;
 const uint8_t bpIdxTripView =	bpIdxTripSave + 1;
+#undef nextAllowedValue
 #define nextAllowedValue bpIdxTripView
 #endif
 #ifdef useScreenEditor
 const uint8_t bpIdxScreenEdit =	nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue bpIdxScreenEdit
 #endif
 #ifdef useEEPROMviewer
 const uint8_t bpIdxEEPROMview =	nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue bpIdxEEPROMview
 #endif
 const uint8_t bpIdxSize =	nextAllowedValue + 1;
@@ -2915,93 +3003,121 @@ const uint8_t screenSize = mainScreenSize + 2
 ;
 
 const uint8_t mainScreenIdx =			0;
+#undef nextAllowedValue
 #define nextAllowedValue mainScreenIdx
 #ifdef useBigFE
 const uint8_t bigFEscreenIdx =			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue bigFEscreenIdx
 #endif
 #ifdef useCPUreading
 const uint8_t CPUmonScreenIdx =			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue CPUmonScreenIdx
 #endif
 #ifdef useBarFuelEconVsTime
 const uint8_t barFEvTscreenIdx =		nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue barFEvTscreenIdx
 #endif
 #ifdef useBarFuelEconVsSpeed
 const uint8_t barFEvSscreenIdx =		nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue barFEvSscreenIdx
 #endif
 #ifdef useBigDTE
 const uint8_t bigDTEscreenIdx =			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue bigDTEscreenIdx
 #endif
 #ifdef useBigTTE
 const uint8_t bigTTEscreenIdx =			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue bigTTEscreenIdx
 #endif
 #ifdef useClock
 const uint8_t systemTimeDisplayScreenIdx =	nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue systemTimeDisplayScreenIdx
 #endif
 const uint8_t settingScreenIdx =		nextAllowedValue + 1;
 const uint8_t paramScreenIdx =			settingScreenIdx + 1;
+#undef nextAllowedValue
 #define nextAllowedValue paramScreenIdx
 #ifdef useClock
 const uint8_t systemTimeEditScreenIdx =		nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue systemTimeEditScreenIdx
 #endif
 #ifdef useSavedTrips
 const uint8_t tripSaveScreenIdx =		nextAllowedValue + 1;
 const uint8_t tripShowScreenIdx =		tripSaveScreenIdx + 1;
+#undef nextAllowedValue
 #define nextAllowedValue tripShowScreenIdx
 #endif
 #ifdef useScreenEditor
 const uint8_t screenEditIdx =			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue screenEditIdx
 #endif
 #ifdef useEEPROMviewer
 const uint8_t eepromViewIdx =			nextAllowedValue + 1;
+#undef nextAllowedValue
 #define nextAllowedValue eepromViewIdx
 #endif
 
 const uint8_t screenParameters[(unsigned int)(screenSize)][6] PROGMEM = {
-	mainScreenIdx,			mainScreenSize,		displayPageCount,		idxDoMainScreenDisplay,		idxDoCursorUpdateMain,			bpIdxMain,
+	{ mainScreenIdx, mainScreenSize, displayPageCount,
+		idxDoMainScreenDisplay, idxDoCursorUpdateMain, bpIdxMain },
 #ifdef useBigFE
-	mainScreenIdx,			mainScreenSize,		3,				idxDoBigFEdisplay,		idxDoCursorUpdateBigFEscreen,		bpIdxBigNum,
+	{ mainScreenIdx, mainScreenSize, 3, idxDoBigFEdisplay,
+		idxDoCursorUpdateBigFEscreen, bpIdxBigNum },
 #endif
 #ifdef useCPUreading
-	mainScreenIdx,			mainScreenSize,		1,				idxDoDisplaySystemInfo,		idxDoNothing,				bpIdxCPUmonitor,
+	{ mainScreenIdx, mainScreenSize, 1, idxDoDisplaySystemInfo,
+		idxDoNothing, bpIdxCPUmonitor },
 #endif
 #ifdef useBarFuelEconVsTime
-	mainScreenIdx,			mainScreenSize,		2,				idxDoBarFEvTdisplay,		idxDoCursorUpdateBarFEvT,		bpIdxBFET,
+	{ mainScreenIdx, mainScreenSize, 2, idxDoBarFEvTdisplay,
+		idxDoCursorUpdateBarFEvT, bpIdxBFET },
 #endif
 #ifdef useBarFuelEconVsSpeed
-	mainScreenIdx,			mainScreenSize,		4,				idxDoBarFEvSdisplay,		idxDoCursorUpdateBarFEvS,		bpIdxBFES,
+	{ mainScreenIdx, mainScreenSize, 4, idxDoBarFEvSdisplay,
+		idxDoCursorUpdateBarFEvS, bpIdxBFES },
 #endif
 #ifdef useBigDTE
-	mainScreenIdx,			mainScreenSize,		3,				idxDoBigDTEdisplay,		idxDoCursorUpdateBigDTEscreen,		bpIdxBigNum,
+	{ mainScreenIdx, mainScreenSize, 3, idxDoBigDTEdisplay,
+		idxDoCursorUpdateBigDTEscreen, bpIdxBigNum },
 #endif
 #ifdef useBigTTE
-	mainScreenIdx,			mainScreenSize,		3,				idxDoBigTTEdisplay,		idxDoCursorUpdateBigTTEscreen,		bpIdxBigNum,
+	{ mainScreenIdx, mainScreenSize, 3, idxDoBigTTEdisplay,
+		idxDoCursorUpdateBigTTEscreen, bpIdxBigNum },
 #endif
 #ifdef useClock
-	mainScreenIdx,			mainScreenSize,		1,				idxDoDisplaySystemTime,		idxDoCursorUpdateSystemTimeScreen,	bpIdxTime,
+	{ mainScreenIdx, mainScreenSize, 1, idxDoDisplaySystemTime,
+		idxDoCursorUpdateSystemTimeScreen, bpIdxTime },
 #endif
-	settingScreenIdx,		1,			settingsSize,			idxDoSettingEditDisplay,	idxDoCursorUpdateSetting,		bpIdxSetting,
-	paramScreenIdx,			1,			12,				idxDoParamEditDisplay,		idxDoNothing,				bpIdxParam,
+	{ settingScreenIdx, 1, settingsSize, idxDoSettingEditDisplay,
+		idxDoCursorUpdateSetting, bpIdxSetting },
+	{ paramScreenIdx, 1, 12, idxDoParamEditDisplay, idxDoNothing,
+		bpIdxParam },
 #ifdef useClock
-	systemTimeEditScreenIdx,	1,			4,				idxDoEditSystemTimeDisplay,	idxDoNothing,				bpIdxClockEdit,
+	{ systemTimeEditScreenIdx, 1, 4, idxDoEditSystemTimeDisplay,
+		idxDoNothing, bpIdxClockEdit },
 #endif
 #ifdef useSavedTrips
-	tripSaveScreenIdx,		1,			tripMenuSize,			idxDoTripSaveDisplay,		idxDoNothing,				bpIdxTripSave,
-	tripShowScreenIdx,		1,			tripValueSize,			idxDoTripShowDisplay,		idxDoCursorUpdateTripShow,		bpIdxTripView,
+	{ tripSaveScreenIdx, 1, tripMenuSize, idxDoTripSaveDisplay,
+		idxDoNothing, bpIdxTripSave },
+	{ tripShowScreenIdx, 1, tripValueSize, idxDoTripShowDisplay,
+		idxDoCursorUpdateTripShow, bpIdxTripView },
 #endif
 #ifdef useScreenEditor
-	screenEditIdx,			1,			displayFormatSize * 2,		idxDoScreenEditDisplay,		idxDoCursorUpdateScreenEdit,		bpIdxScreenEdit,
+	{ screenEditIdx, 1, displayFormatSize * 2, idxDoScreenEditDisplay,
+		idxDoCursorUpdateScreenEdit, bpIdxScreenEdit },
 #endif
 #ifdef useEEPROMviewer
-	eepromViewIdx,			1,			eePtrEnd,			idxDoEEPROMviewDisplay,		idxDoNothing,				bpIdxEEPROMview,
+	{ eepromViewIdx, 1, eePtrEnd, idxDoEEPROMviewDisplay, idxDoNothing,
+		bpIdxEEPROMview },
 #endif
 };
 
@@ -3304,7 +3420,6 @@ ISR( TIMER2_OVF_vect ) // system timer interrupt handler
 	static uint8_t thisKeyPressed;
 	static unsigned long lastTime;
 	static unsigned long timerSleep = 0;
-	static unsigned long wp;
 	static unsigned int timerLoopCount = 0;
 
 	unsigned long thisTime;
@@ -4961,8 +5076,6 @@ void Buffer::push(uint8_t value)
 
 void Buffer::pull(void)
 {
-	uint8_t s = 0;
-
 	uint8_t oldSREG = SREG; // save interrupt flag status
 	cli(); // disable interrupts
 
@@ -5160,10 +5273,12 @@ unsigned long SWEET64(const uint8_t * sched, uint8_t tripIdx)
 {
 	uint8_t spnt = 0;
 	uint8_t instr;
-	uint8_t b;
+	uint8_t b = 0;
 	uint8_t f;
 	const uint8_t * prgmStack[16];
+#ifdef useSWEET64trace
 	uint8_t tf = 0;
+#endif
 
 	while (true)
 	{
@@ -5237,8 +5352,10 @@ unsigned long SWEET64(const uint8_t * sched, uint8_t tripIdx)
 			if (spnt--) sched = prgmStack[(unsigned int)(spnt)];
 			else break;
 		}
+#ifdef useSWEET64trace
 		else if (instr == instrTraceOn) tf = 1;
 		else if (instr == instrTraceOff) tf = 0;
+#endif
 		else if (instr == instrSkip) f = 1;
 		else if (instr == instrSkipIfMetricMode) f = metricFlag;
 		else if (instr == instrSkipIfZero) f = zeroTest64(tu2);
@@ -5882,9 +5999,6 @@ void resetWindowFilter(void)
 #endif
 void initGuino(void) // initialize all the parameters
 {
-
-	uint8_t injDirection;
-
 	vssPause = (uint8_t)eepromReadVal((unsigned int)(pVSSpauseIdx));
 	metricFlag = (uint8_t)eepromReadVal((unsigned int)(pMetricFlagIdx));
 	ignoreChar = (metricFlag ? '{' : '\\');
@@ -6912,30 +7026,38 @@ const uint8_t prgmDoEEPROMmetricConversion[] PROGMEM = {
 
 void doParamSave(void)
 {
-
-	uint8_t t;
-
-	if (eepromWriteVal((unsigned int)(paramPtr), rformat())) // if the setting has changed
+	/* if the setting has changed */
+	if (eepromWriteVal((unsigned int)(paramPtr), rformat()))
 	{
-
 #ifdef useBarFuelEconVsSpeed
-		if ((paramPtr == pBarLowSpeedCutoffIdx) || (paramPtr == pBarSpeedQuantumIdx)) doResetBarFEvS();
+		if ((paramPtr == pBarLowSpeedCutoffIdx) ||
+		    (paramPtr == pBarSpeedQuantumIdx)) 
+			doResetBarFEvS();
 #endif
-
-		if (paramPtr == pMetricFlagIdx) SWEET64(prgmDoEEPROMmetricConversion, 0); // if metric flag has changed
-
+		/* if metric flag has changed */
+		if (paramPtr == pMetricFlagIdx) 
+			SWEET64(prgmDoEEPROMmetricConversion, 0);
 #ifdef useCalculatedFuelFactor
-		// if fuel pressure, reference pressure, injector count, or injector size changed
-		if ((paramPtr == pSysFuelPressureIdx) || (paramPtr == pRefFuelPressureIdx) || (paramPtr == pInjectorCountIdx) || (paramPtr == pInjectorSizeIdx))
-			SWEET64(prgmCalculateFuelFactor, 0); // calculate and store microseconds per gallon factor
+		/* 
+		 * if fuel pressure, reference pressure, injector count,
+		 * or injector size changed calculate and store microseconds 
+		 * per gallon factor 
+		 */
+		if ((paramPtr == pSysFuelPressureIdx) ||
+		    (paramPtr == pRefFuelPressureIdx) ||
+		    (paramPtr == pInjectorCountIdx) ||
+		    (paramPtr == pInjectorSizeIdx))
+			SWEET64(prgmCalculateFuelFactor, 0);
 #endif
-
-		initGuino(); // reconfigure system based on changed settings
+		/* reconfigure system based on changed settings */
+		initGuino();
 		generalMenuLevelReturn(PSTR("Param Changed"), settingScreenIdx);
-
 	}
-	else generalMenuLevelReturn(PSTR("Param Unchanged"), settingScreenIdx);
-
+	else 
+	{
+		generalMenuLevelReturn(PSTR("Param Unchanged"), 
+		    settingScreenIdx);
+	}
 }
 
 void generalMenuLevelReturn(const char * s, uint8_t newMenuLevel)
