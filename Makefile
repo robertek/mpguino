@@ -12,8 +12,9 @@ CFLAGS_STD 		= -std=c11
 CXXFLAGS_STD 		= -std=c++11
 
 ### MONITOR
-MONITOR_BAUDRATE 	= 115200
-MONITOR_PORT 		= /dev/tty.usbmodem*
+MONITOR_PORT 		= /dev/null
+AVRDUDE_ARD_PROGRAMMER 	= usbasp
+AVRDUDE_OPTS 		= -e
 
 ### path to Arduino.mk
 include $(ARDMK_DIR)/Arduino.mk
