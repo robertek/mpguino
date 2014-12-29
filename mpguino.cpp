@@ -30,12 +30,14 @@
  create accumulators for raw speed/injector data
 
  mainloop{
- update instantaneous trip, current trip, tank trip, any other setup trip accumulators with raw data accumulators
- reset raw data accumulators
- (if configured) transmit instantaneous trip accumulators
- display computations
- scan for key presses and perform their function (change screen, reset a trip, goto setup, edit screen, restore trips, etc)
- pause for remainder of 1/2 second
+ * update instantaneous trip, current trip, tank trip, any other setup trip
+   accumulators with raw data accumulators
+ * reset raw data accumulators
+ * (if configured) transmit instantaneous trip accumulators
+ * display computations
+ * scan for key presses and perform their function (change screen, reset a trip,
+   goto setup, edit screen, restore trips, etc)
+ * pause for remainder of 1/2 second
  }
 */
 
@@ -58,9 +60,11 @@ extern "C" {
 /* BEGIN function protoypes */
 /******************************************************************************/
 
-typedef void (*pFunc)(void); // type for display function pointers
+/* type for display function pointers */
+typedef void (*pFunc)(void);
 #ifdef useBuffering
-typedef void (*qFunc)(uint8_t); // type for buffer function pointers
+/* type for buffer function pointers */
+typedef void (*qFunc)(uint8_t);
 #endif
 
 #ifdef useChryslerMAPCorrection
@@ -119,7 +123,8 @@ char * doFormat(uint8_t tripIdx, uint8_t dispPos);
 unsigned long doCalculate(uint8_t calcIdx, uint8_t tripIdx);
 char * doFormat(uint8_t tripIdx, uint8_t calcIdx, uint8_t dispPos);
 char * format(unsigned long num, uint8_t ndp);
-char * format64(const uint8_t * prgmPtr, unsigned long num, char * str, uint8_t ndp);
+char * format64(const uint8_t * prgmPtr, unsigned long num, char * str,
+    uint8_t ndp);
 unsigned long rformat(void);
 unsigned long convertTime(unsigned long * an);
 #ifdef useWindowFilter
@@ -145,8 +150,10 @@ void doRefreshDisplay(void);
 void doNothing(void);
 void doNothing2(uint8_t s);
 void noSupport(void);
-void displayMainScreenFunction(uint8_t readingIdx, uint8_t k, uint8_t functBlink, uint8_t tripBlink);
-void writeCGRAMlabelChar(uint8_t cgChar, uint8_t functIdx, uint8_t tripIdx, uint8_t functBlink, uint8_t tripBlink);
+void displayMainScreenFunction(uint8_t readingIdx, uint8_t k,
+    uint8_t functBlink, uint8_t tripBlink);
+void writeCGRAMlabelChar(uint8_t cgChar, uint8_t functIdx, uint8_t tripIdx,
+    uint8_t functBlink, uint8_t tripBlink);
 void doCursorUpdateMain(void);
 void doMainScreenDisplay(void);
 void doNextBright(void);
@@ -160,9 +167,11 @@ uint8_t bgPlotConvert(uint8_t coord);
 void bgPlot(uint8_t idx, uint8_t lowerPoint, uint8_t upperPoint, uint8_t mode);
 void bgOutputPlot(uint8_t idx, uint8_t yIdx);
 uint8_t bgConvert(unsigned long v, unsigned long ll, unsigned long d);
-void formatBarGraph(uint8_t bgSize, uint8_t slotIdx, unsigned long centerVal, unsigned long topLimit);
+void formatBarGraph(uint8_t bgSize, uint8_t slotIdx, unsigned long centerVal,
+    unsigned long topLimit);
 void displayBarGraphLine(uint8_t lineNum, uint8_t tripIdx, uint8_t tripCalcIdx);
-void displayBarGraph(uint8_t trip1idx, uint8_t trip1CalcIdx, uint8_t trip2idx, uint8_t trip2CalcIdx);
+void displayBarGraph(uint8_t trip1idx, uint8_t trip1CalcIdx, uint8_t trip2idx,
+    uint8_t trip2CalcIdx);
 #endif
 #ifdef useBarFuelEconVsSpeed
 void doCursorUpdateBarFEvS(void);
@@ -248,7 +257,7 @@ void doTripBumpSlot(void);
 void doTripShowCancel(void);
 #endif
 
-/* Programmable main display screen edit support section*/
+/* Programmable main display screen edit support section */
 #ifdef useScreenEditor
 void doCursorUpdateScreenEdit(void);
 void doScreenEditDisplay(void);
@@ -6782,7 +6791,6 @@ void writeCGRAMlabelChar(uint8_t cgChar, uint8_t functIdx, uint8_t tripIdx, uint
 }
 
 /* Main screen section */
-
 const char mainScreenFuncNames[] PROGMEM = {
 	"Instrument\0"
 	"Custom\0"
@@ -6810,159 +6818,144 @@ const char mainScreenFuncNames[] PROGMEM = {
 
 void doCursorUpdateMain(void)
 {
-
-	printStatusMessage(findStr(mainScreenFuncNames, screenCursor[(unsigned int)(mainScreenIdx)])); // briefly display screen name
-
+	/* briefly display screen name */
+	printStatusMessage(findStr(mainScreenFuncNames,
+	    screenCursor[mainScreenIdx]));
 }
 
 void doMainScreenDisplay(void)
 {
-
-	uint8_t i = screenCursor[(unsigned int)(mainScreenIdx)];
+	uint8_t i = screenCursor[mainScreenIdx];
+	uint8_t x, k;
 
 	i <<= 2;
 
-	for (uint8_t x = 0; x < 4; x++)
+	for (x = 0; x < 4; x++)
 	{
-
 #ifdef useScreenEditor
-		uint8_t k = displayFormats[(unsigned int)(i++)];
+		k = displayFormats[i++];
 #else
-		uint8_t k = pgm_read_byte(&displayFormats[(unsigned int)(i++)]);
+		k = pgm_read_byte(&displayFormats[i++]);
 #endif
 		displayMainScreenFunction(x, k, 0, 136);
-
 	}
-
 }
 
 void doNextBright(void)
 {
-
 	brightnessIdx++;
-	if (brightnessIdx >= brightnessLength) brightnessIdx = 0;
+	if (brightnessIdx >= brightnessLength)
+		brightnessIdx = 0;
 	LCD::setBright(brightnessIdx);
 
 	initStatusLine();
 	printFlash(PSTR("Backlight = "));
 	printStr(brightString, brightnessIdx);
 	execStatusLine();
-
 }
 
 void doLongGoLeft(void)
 {
-
 	doCursorMoveRelative(255, 0);
-
 }
 
 void doLongGoRight(void)
 {
-
 	doCursorMoveRelative(1, 0);
-
 }
 
 void doTripResetTank(void)
 {
-
-	tripArray[(unsigned int)(tankIdx)].reset();
+	tripArray[tankIdx].reset();
 #ifdef trackIdleEOCdata
-	tripArray[(unsigned int)(eocIdleTankIdx)].reset();
+	tripArray[eocIdleTankIdx].reset();
 #endif
 #ifdef useBarFuelEconVsSpeed
 	doResetBarFEvS();
 #endif
 	printStatusMessage(PSTR("Tank Reset"));
-
 }
 
 void doTripResetCurrent(void)
 {
-
-	tripArray[(unsigned int)(currentIdx)].reset();
+	tripArray[currentIdx].reset();
 #ifdef trackIdleEOCdata
-	tripArray[(unsigned int)(eocIdleCurrentIdx)].reset();
+	tripArray[eocIdleCurrentIdx].reset();
 #endif
 	printStatusMessage(PSTR("Current Reset"));
-
 }
 
 /* Setting selector section */
-
 void doCursorUpdateSetting(void)
 {
-
-	paramPtr = screenCursor[(unsigned int)(settingScreenIdx)] + (uint8_t)(eePtrSettingsStart);
+	paramPtr = screenCursor[settingScreenIdx] +
+	    (uint8_t)(eePtrSettingsStart);
 	doParamRevert();
-
 }
 
 void doSettingEditDisplay(void)
 {
-
-	printStr(parmLabels, screenCursor[(unsigned int)(settingScreenIdx)]); // print parameter name at top left
+	/* print parameter name at top left */
+	printStr(parmLabels, screenCursor[settingScreenIdx]);
 	clrEOL();
-	gotoXY(0, 1); // go to next line
+	/* go to next line */
+	gotoXY(0, 1);
 	print(pBuff);
 	clrEOL();
-
 }
 
 void doGoSettingsEdit(void)
 {
-
 	prevMenuLevel = menuLevel;
 	doCursorMoveAbsolute(settingScreenIdx, 0);
-
 }
 
 void doReturnToMain(void)
 {
-
 	menuLevel = prevMenuLevel;
-
 }
 
 /* Individual parameter editor section */
-
 void doParamEditDisplay(void)
 {
-
-	printStr(parmLabels, screenCursor[(unsigned int)(settingScreenIdx)]); // print parameter name at top left
+	/* print parameter name at top left */
+	printStr(parmLabels, screenCursor[settingScreenIdx]);
 	clrEOL();
-	gotoXY(0, 1); // go to next line
+	/* go to next line */
+	gotoXY(0, 1);
 
-	uint8_t c = pBuff[(unsigned int)(screenCursor[(unsigned int)(paramScreenIdx)])]; // save existing character
-	if ((timerHeartBeat & 0b01010101) && (screenCursor[(unsigned int)(paramScreenIdx)] < 10)) pBuff[(unsigned int)(screenCursor[(unsigned int)(paramScreenIdx)])] = '_'; // replace character with an underscore
-	print(pBuff); // print number
-	pBuff[(unsigned int)(screenCursor[(unsigned int)(paramScreenIdx)])] = c;
+	/* save existing character */
+	uint8_t c = pBuff[screenCursor[paramScreenIdx]];
 
-	blinkFlash(&paramButtonChars[0], (screenCursor[(unsigned int)(paramScreenIdx)] == 10));
-	blinkFlash(&paramButtonChars[4], (screenCursor[(unsigned int)(paramScreenIdx)] == 11));
+	/* replace character with an underscore */
+	if ((timerHeartBeat & 0b01010101) &&
+	    (screenCursor[paramScreenIdx] < 10))
+		pBuff[screenCursor[paramScreenIdx]] = '_';
 
+	/* print number */
+	print(pBuff);
+	pBuff[screenCursor[paramScreenIdx]] = c;
+
+	blinkFlash(&paramButtonChars[0], (screenCursor[paramScreenIdx] == 10));
+	blinkFlash(&paramButtonChars[4], (screenCursor[paramScreenIdx] == 11));
 }
 
 void doGoParamEdit(void)
 {
-
-	paramLength = pgm_read_byte(&paramsLength[(unsigned int)(screenCursor[(unsigned int)(settingScreenIdx)])]);
+	paramLength = pgm_read_byte(
+	    &paramsLength[screenCursor[settingScreenIdx]]);
 	paramMaxValue = (1 << paramLength);
 	paramMaxValue -= 1;
 
 	menuLevel = paramScreenIdx;
 	format64(prgmFormatToNumber, paramMaxValue, mBuff2, 3);
 	doParamFindLeft();
-
 }
 
 void doParamExit(void)
 {
-
 	doParamRevert();
 	generalMenuLevelReturn(PSTR("Param Reverted"), settingScreenIdx);
-
 }
 
 #ifdef useCalculatedFuelFactor
@@ -6985,7 +6978,8 @@ const uint8_t prgmCalculateFuelFactor[] PROGMEM = {
 	instrCall, idxS64doDivide,
 
 	instrSwap, 0x23,
-	instrLdByte, 0x02, 60,								// load seconds per minute into register 2
+	/* load seconds per minute into register 2 */
+	instrLdByte, 0x02, 60,
 	instrLdConst, 0x01, idxMicroSecondsPerSecond,
 	instrCall, idxS64doMultiply,
 	instrLdConst, 0x01, idxDecimalPoint,
@@ -7031,17 +7025,17 @@ void doParamSave(void)
 	{
 #ifdef useBarFuelEconVsSpeed
 		if ((paramPtr == pBarLowSpeedCutoffIdx) ||
-		    (paramPtr == pBarSpeedQuantumIdx)) 
+		    (paramPtr == pBarSpeedQuantumIdx))
 			doResetBarFEvS();
 #endif
 		/* if metric flag has changed */
-		if (paramPtr == pMetricFlagIdx) 
+		if (paramPtr == pMetricFlagIdx)
 			SWEET64(prgmDoEEPROMmetricConversion, 0);
 #ifdef useCalculatedFuelFactor
-		/* 
+		/*
 		 * if fuel pressure, reference pressure, injector count,
-		 * or injector size changed calculate and store microseconds 
-		 * per gallon factor 
+		 * or injector size changed calculate and store microseconds
+		 * per gallon factor
 		 */
 		if ((paramPtr == pSysFuelPressureIdx) ||
 		    (paramPtr == pRefFuelPressureIdx) ||
@@ -7053,77 +7047,69 @@ void doParamSave(void)
 		initGuino();
 		generalMenuLevelReturn(PSTR("Param Changed"), settingScreenIdx);
 	}
-	else 
+	else
 	{
-		generalMenuLevelReturn(PSTR("Param Unchanged"), 
+		generalMenuLevelReturn(PSTR("Param Unchanged"),
 		    settingScreenIdx);
 	}
 }
 
 void generalMenuLevelReturn(const char * s, uint8_t newMenuLevel)
 {
-
 	menuLevel = newMenuLevel;
 	printStatusMessage(s);
-
 }
 
 void printStatusMessage(const char * s)
 {
-
 	initStatusLine();
 	printFlash(s);
 	execStatusLine();
-
 }
 
 void doParamFindLeft(void)
 {
+	uint8_t x;
 
-	screenCursor[(unsigned int)(paramScreenIdx)] = 9;
+	screenCursor[paramScreenIdx] = 9;
 
-	// do a nice thing and put the edit cursor at the first non zero number
-	for (uint8_t x = 9; x < 10; x--) if (pBuff[(unsigned int)(x)] != ' ') screenCursor[(unsigned int)(paramScreenIdx)] = x;
-
+	/*
+	 * do a nice thing and put the edit cursor at the first non zero number
+	 */
+	for (x = 9; x < 10; x--)
+		if (pBuff[x] != ' ')
+			screenCursor[paramScreenIdx] = x;
 }
 
 void doParamFindRight(void)
 {
-
-	screenCursor[(unsigned int)(paramScreenIdx)] = 9;
-
+	screenCursor[paramScreenIdx] = 9;
 }
 
 void doParamStoreMax(void)
 {
-
 	doParamStoreNumber(paramMaxValue);
-
 }
 
 void doParamStoreMin(void)
 {
-
 	doParamStoreNumber(0);
-
 }
 
 void doParamRevert(void)
 {
-
 	doParamStoreNumber(eepromReadVal((unsigned int)(paramPtr)));
-
 }
 
 void doParamStoreNumber(unsigned long v)
 {
-
 	format64(prgmFormatToNumber, v, pBuff, 3);
 #ifdef useLegacyLCD
-	if (paramPtr == pContrastIdx) LCD::setContrast((uint8_t)(v)); // adjust contrast dynamically
+	/* adjust contrast dynamically */
+	if (paramPtr == pContrastIdx)
+		LCD::setContrast((uint8_t)(v));
 #endif
 	doParamFindLeft();
-
 }
 
 void doParamReformat(void)
@@ -7131,83 +7117,95 @@ void doParamReformat(void)
 
 	uint8_t c = '0';
 	uint8_t d = ' ';
+	uint8_t x;
 
-	for (uint8_t x = 0; x < 9; x++)
+	for (x = 0; x < 9; x++)
 	{
 
-		if (pBuff[(unsigned int)(x)] == c) pBuff[(unsigned int)(x)] = d;
-		else if ((c == '0') && (pBuff[(unsigned int)(x)] != ' '))
+		if (pBuff[x] == c)
 		{
-
+			pBuff[x] = d;
+		}
+		else if ((c == '0') && (pBuff[x] != ' '))
+		{
 			c = ' ';
 			d = '0';
-
 		}
-
 	}
 
-	if (pBuff[9] == ' ') pBuff[9] = '0';
-
+	if (pBuff[9] == ' ')
+		pBuff[9] = '0';
 }
 
 void doParamChangeDigit(void)
 {
+	uint8_t w, x;
 
-	uint8_t w;
-
-	if (screenCursor[(unsigned int)(paramScreenIdx)] == 10) doParamSave();
-	else if (screenCursor[(unsigned int)(paramScreenIdx)] == 11) doParamExit();
+	if (screenCursor[paramScreenIdx] == 10)
+	{
+		doParamSave();
+	}
+	else if (screenCursor[paramScreenIdx] == 11)
+	{
+		doParamExit();
+	}
 	else
 	{
-
-		if (paramLength == 1) pBuff[(unsigned int)(screenCursor[(unsigned int)(paramScreenIdx)])] ^= 1;
+		if (paramLength == 1)
+		{
+			pBuff[screenCursor[paramScreenIdx]] ^= 1;
+		}
 		else
 		{
+			/*
+			 * fetch digit from stored numeric string representing
+			 * parameter to be changed
+			 */
+			w = pBuff[screenCursor[paramScreenIdx]];
+			/* if this is a leading space, use 0 as working digit */
+			if (w == ' ')
+				w = '0';
+			/* adjust working digit */
+			w++;
+			/* handle working digit rollover */
+			if (w > '9')
+				w = '0';
 
-			w = pBuff[(unsigned int)(screenCursor[(unsigned int)(paramScreenIdx)])]; // fetch digit from stored numeric string representing parameter to be changed
-			if (w == ' ') w = '0'; // if this is a leading space, use 0 as working digit
-			w++; // adjust working digit
-			if (w > '9') w = '0'; // handle working digit rollover
-
-			pBuff[(unsigned int)(screenCursor[(unsigned int)(paramScreenIdx)])] = w;
+			pBuff[screenCursor[paramScreenIdx]] = w;
 			doParamReformat();
 
-			for (uint8_t x = 0; x < 10; x++)
+			for (x = 0; x < 10; x++)
 			{
-
-				if (pBuff[(unsigned int)(x)] < mBuff2[(unsigned int)(x)]) x = 10;
-				else if (pBuff[(unsigned int)(x)] > mBuff2[(unsigned int)(x)])
+				if (pBuff[x] < mBuff2[x])
 				{
-
 					x = 10;
-					pBuff[(unsigned int)(screenCursor[(unsigned int)(paramScreenIdx)])] = '0';
-					doParamReformat();
-
 				}
-
+				else if (pBuff[x] > mBuff2[x])
+				{
+					x = 10;
+					pBuff[screenCursor[paramScreenIdx]] =
+					    '0';
+					doParamReformat();
+				}
 			}
-
 #ifdef useLegacyLCD
-			if (paramPtr == pContrastIdx) LCD::setContrast((uint8_t)(rformat())); // adjust contrast dynamically
+			/* adjust contrast dynamically */
+			if (paramPtr == pContrastIdx)
+				LCD::setContrast((uint8_t)(rformat()));
 #endif
-
 		}
-
 	}
-
 }
 
-#ifdef useBigFE // large Fuel Economy display support section
+/* large Fuel Economy display support section */
+#ifdef useBigFE
 void doCursorUpdateBigFEscreen(void)
 {
-
 	displayBigStatus(bigFEscreenIdx, PSTR(" Fuel Econ"));
-
 }
 
 void doBigFEdisplay(void)
 {
-
 	uint8_t dIdx = fedSelect(bigFEscreenIdx);
 
 	displayBigNumber(doFormat(dIdx, tFuelEcon, dispFE));
@@ -7215,82 +7213,76 @@ void doBigFEdisplay(void)
 	printStr(bigFEDispChars, dIdx);
 	gotoXY(12, 1);
 	printFlash(PSTR("{MPG \\L100}"));
-
 }
-
 #endif
-#ifdef useBigDTE // large Distance-To-Empty display support section
+
+/* large Distance-To-Empty display support section */
+#ifdef useBigDTE
 void doCursorUpdateBigDTEscreen(void)
 {
-
 	displayBigStatus(bigDTEscreenIdx, PSTR(" DistToEmpty"));
-
 }
 
 void doBigDTEdisplay(void)
 {
-
-	displayBigNumber(doFormat(fedSelect(bigDTEscreenIdx), tDistanceToEmpty, dispDTE));
-
+	displayBigNumber(doFormat(fedSelect(bigDTEscreenIdx), tDistanceToEmpty,
+	    dispDTE));
 }
-
 #endif
-#ifdef useBigTTE // large Time-To-Empty display support section
+
+/* large Time-To-Empty display support section */
+#ifdef useBigTTE
 void doCursorUpdateBigTTEscreen(void)
 {
-
   	displayBigStatus(bigTTEscreenIdx, PSTR(" TimeToEmpty"));
-
 }
 
 void doBigTTEdisplay(void)
 {
-
-	displayBigTime(format64(prgmFormatToTime, SWEET64(prgmTimeToEmpty, fedSelect(bigTTEscreenIdx)), mBuff1, 3), 4);
-
+	displayBigTime(format64(prgmFormatToTime,
+	    SWEET64(prgmTimeToEmpty, fedSelect(bigTTEscreenIdx)), mBuff1, 3),
+	    4);
 }
-
 #endif
-#ifdef useClock // Clock support section
+
+/* Clock support section */
+#ifdef useClock
 void doCursorUpdateSystemTimeScreen(void)
 {
-
 	printStatusMessage(PSTR("System Time"));
-
 }
 
-void doDisplaySystemTime(void) // display system time
+/* display system time */
+void doDisplaySystemTime(void)
 {
-
-	displayBigTime(format64(prgmFormatToTime, convertTime(outputCycles), mBuff1, 3), 4);
-
+	displayBigTime(format64(prgmFormatToTime, convertTime(outputCycles),
+	    mBuff1, 3), 4);
 }
 
 void doGoEditSystemTime(void)
 {
-
-	format64(prgmFormatToTime, convertTime(outputCycles), pBuff, 3); // convert system time from ticks into seconds, and format for output
+	/* convert system time from ticks into seconds, and format for output */
+	format64(prgmFormatToTime, convertTime(outputCycles), pBuff, 3);
 	doCursorMoveAbsolute(systemTimeEditScreenIdx, 0);
-
 }
 
 void doEditSystemTimeDisplay(void)
 {
-
-	displayBigTime(pBuff, screenCursor[(unsigned int)(systemTimeEditScreenIdx)]);
-
+	displayBigTime(pBuff, screenCursor[systemTimeEditScreenIdx]);
 }
 
 void doEditSystemTimeChangeDigit(void)
 {
+	pBuff[screenCursor[systemTimeEditScreenIdx]]++;
+	if (pBuff[screenCursor[systemTimeEditScreenIdx]] > '9')
+		pBuff[screenCursor[systemTimeEditScreenIdx]] = '0';
 
-	pBuff[(unsigned int)(screenCursor[(unsigned int)(systemTimeEditScreenIdx)])]++;
-	if (pBuff[(unsigned int)(screenCursor[(unsigned int)(systemTimeEditScreenIdx)])] > '9') pBuff[(unsigned int)(screenCursor[(unsigned int)(systemTimeEditScreenIdx)])] = '0';
-
-	if (pBuff[2] > '5') pBuff[2] = '0'; // this will only happen if systemTimeEditScreenIdx == 2
-	if ((pBuff[0] == '2') && (pBuff[1] > '3')) pBuff[1] = '0'; // this will only happen if systemTimeEditScreenIdx == 0 or 1
-	if (pBuff[0] > '2') pBuff[0] = '0'; // this will only happen if systemTimeEditScreenIdx == 0
-
+	/* this will only happen if systemTimeEditScreenIdx == 2 */
+	if (pBuff[2] > '5') pBuff[2] = '0';
+	/* this will only happen if systemTimeEditScreenIdx == 0 or 1 */
+	if ((pBuff[0] == '2') && (pBuff[1] > '3')) pBuff[1] = '0';
+	/* this will only happen if systemTimeEditScreenIdx == 0 */
+	if (pBuff[0] > '2') pBuff[0] = '0';
 }
 
 const uint8_t prgmConvertToCycles[] PROGMEM = {
@@ -7323,136 +7315,141 @@ const uint8_t prgmConvertToCycles[] PROGMEM = {
 
 void doEditSystemTimeSave(void)
 {
-
-	uint8_t b;
+	uint8_t b, x;
 
 	pBuff[4] = '0';
 	pBuff[5] = '0';
 
 	copy64(tempPtr[1], (union union_64 *)&outputCycles);
 
-	for (uint8_t x = 4; x < 6; x -= 2)
+	for ( x = 4; x < 6; x -= 2)
 	{
-
-		b = pBuff[(unsigned int)(x)] - '0';
+		b = pBuff[x] - '0';
 		b *= 10;
-		b += pBuff[(unsigned int)(x + 1)] - '0';
-		tempPtr[2]->u8[(unsigned int)(x)] = b;
-
+		b += pBuff[x + 1] - '0';
+		tempPtr[2]->u8[x] = b;
 	}
 
-	SWEET64(prgmConvertToCycles, 0); // convert time into timer2 clock cycles
+	/* convert time into timer2 clock cycles */
+	SWEET64(prgmConvertToCycles, 0);
 
 	cli();
 	copy64((union union_64 *)&clockCycles, tempPtr[1]);
 	sei();
 
 	generalMenuLevelReturn(PSTR("Time Set"), systemTimeDisplayScreenIdx);
-
 }
 
 void doEditSystemTimeCancel(void)
 {
-
-	generalMenuLevelReturn(PSTR("Time NOT Set"), systemTimeDisplayScreenIdx);
-
+	generalMenuLevelReturn(PSTR("Time NOT Set"),
+	    systemTimeDisplayScreenIdx);
 }
-
 #endif
-#ifdef useBarFuelEconVsSpeed // (parameter) vs. Speed Bar Graph display section
+
+/* (parameter) vs. Speed Bar Graph display section */
+#ifdef useBarFuelEconVsSpeed
 uint8_t FEvSpdTripIdx;
 
 void doCursorUpdateBarFEvS(void)
 {
+	uint8_t b = pgm_read_byte(
+	    &barFEvSdisplayFuncs[screenCursor[barFEvSscreenIdx]]);
 
-	uint8_t b = pgm_read_byte(&barFEvSdisplayFuncs[(unsigned int)(screenCursor[(unsigned int)(barFEvSscreenIdx)])]);
+	for (uint8_t x = 0; x < bgDataSize; x++)
+		barGraphData[bgDataSize - x - 1] =
+		    doCalculate(b, (x + FEvsSpeedIdx));
 
-	for (uint8_t x = 0; x < bgDataSize; x++) barGraphData[(unsigned int)(bgDataSize - x - 1)] = doCalculate(b, (x + FEvsSpeedIdx));
-
-	printStatusMessage(findStr(barFEvSfuncNames, screenCursor[(unsigned int)(barFEvSscreenIdx)])); // briefly display screen name
-
+	/* briefly display screen name */
+	printStatusMessage(findStr(barFEvSfuncNames,
+	    screenCursor[barFEvSscreenIdx]));
 }
 
 void doBarFEvSdisplay(void)
 {
+	uint8_t b = pgm_read_byte(
+	    &barFEvSdisplayFuncs[screenCursor[barFEvSscreenIdx]]);
 
-	uint8_t b = pgm_read_byte(&barFEvSdisplayFuncs[(unsigned int)(screenCursor[(unsigned int)(barFEvSscreenIdx)])]);
+	if (FEvSpdTripIdx < 255)
+		barGraphData[bgDataSize + FEvsSpeedIdx - FEvSpdTripIdx - 1] =
+		    doCalculate(b, FEvSpdTripIdx);
 
-	if (FEvSpdTripIdx < 255) barGraphData[(unsigned int)(bgDataSize + FEvsSpeedIdx - FEvSpdTripIdx - 1)] = doCalculate(b, FEvSpdTripIdx);
+	formatBarGraph(bgDataSize, (FEvSpdTripIdx - FEvsSpeedIdx), 0,
+	    doCalculate(b, tankIdx));
 
-	formatBarGraph(bgDataSize, (FEvSpdTripIdx - FEvsSpeedIdx), 0, doCalculate(b, tankIdx));
-
-	displayBarGraph(FEvSpdTripIdx, b, ((timerHeartBeat & 0b00110011) ? tankIdx : instantIdx), ((timerHeartBeat & 0b00110011) ? b : tSpeed));
-
+	displayBarGraph(FEvSpdTripIdx, b,
+	    ((timerHeartBeat & 0b00110011) ? tankIdx : instantIdx),
+	    ((timerHeartBeat & 0b00110011) ? b : tSpeed));
 }
 
 void doResetBarFEvS(void)
 {
-
-	for (uint8_t x = 0; x < bgDataSize; x++) tripArray[(unsigned int)(x + FEvsSpeedIdx)].reset();
-
+	for (uint8_t x = 0; x < bgDataSize; x++)
+		tripArray[x + FEvsSpeedIdx].reset();
 }
-
 #endif
-#ifdef useBarFuelEconVsTime // Differential/Absolute Fuel Economy vs. Time display section
+
+/* Differential/Absolute Fuel Economy vs. Time display section */
+#ifdef useBarFuelEconVsTime
 void doResetBarFEvT(void)
 {
-
-	tripArray[(unsigned int)(periodIdx)].reset();
+	tripArray[periodIdx].reset();
 	bFEvTcount = 0;
 	bFEvTstartIDx = 0;
 	bFEvTsize = 0;
-
 }
 
 void doCursorUpdateBarFEvT(void)
 {
-
-	printStatusMessage(findStr(barFEvTfuncNames, screenCursor[(unsigned int)(barFEvTscreenIdx)])); // briefly display screen name
-
+	/* briefly display screen name */
+	printStatusMessage(findStr(barFEvTfuncNames,
+	    screenCursor[barFEvTscreenIdx]));
 }
 
 void doBarFEvTdisplay(void)
 {
-
 	uint8_t i = 0;
 	uint8_t j = bFEvTstartIDx;
 	unsigned long v = doCalculate(tFuelEcon, currentIdx);
 
 	while (i < bFEvTsize)
 	{
-
-		if (j == 0) j = bgDataSize;
+		if (j == 0)
+			j = bgDataSize;
 		j--;
 
-		barGraphData[(unsigned int)(i)] = barFEvsTimeData[(unsigned int)(j)];
+		barGraphData[i] = barFEvsTimeData[j];
 		i++;
-
 	}
 
-	formatBarGraph(bFEvTsize, (bgDataSize - 1), ((screenCursor[(unsigned int)(barFEvTscreenIdx)]) ? 0 : v), v);
+	formatBarGraph(bFEvTsize, (bgDataSize - 1),
+	    ((screenCursor[barFEvTscreenIdx]) ? 0 : v), v);
 
 	displayBarGraph(currentIdx, tFuelEcon, periodIdx, tFuelEcon);
-
 }
-
 #endif
-#ifdef useCPUreading // System utilization display section
-void doDisplaySystemInfo(void) // display max cpu utilization and RAM
-{
 
+/* System utilization display section */
+#ifdef useCPUreading
+/* display max cpu utilization and RAM */
+void doDisplaySystemInfo(void)
+{
 	unsigned int i = (unsigned int)(&i);
 	unsigned long t[2];
 
-	if ((unsigned int) __brkval == 0) i -= (unsigned int)(&__bss_end);
-	else i -= (unsigned int)(__brkval);
+	if ((unsigned int) __brkval == 0)
+		i -= (unsigned int)(&__bss_end);
+	else
+		i -= (unsigned int)(__brkval);
 
 	unsigned long mem = (unsigned long)i;
 	mem *= 1000;
 
-	cli(); // perform atomic transfer of clock to main program
+	/* perform atomic transfer of clock to main program */
+	cli();
 
-	t[0] = systemCycles[0]; // perform atomic transfer of system time to main program
+	/* perform atomic transfer of system time to main program */
+	t[0] = systemCycles[0];
 	t[1] = systemCycles[1];
 
 	sei();
@@ -7463,7 +7460,6 @@ void doDisplaySystemInfo(void) // display max cpu utilization and RAM
 	gotoXY(0, 1);
 	printFlash(PSTR(" FREE MEM:"));
 	print(format(mem, 0));
-
 }
 
 const uint8_t prgmFindCPUutilPercent[] PROGMEM = {
@@ -7475,20 +7471,16 @@ const uint8_t prgmFindCPUutilPercent[] PROGMEM = {
 
 void displayCPUutil(void)
 {
-
 	printFlash(PSTR("C%"));
 	init64(tempPtr[1], timerLoopLength);
 	print(format(SWEET64(prgmFindCPUutilPercent, 0), 2));
-
 }
 
 void doShowCPU(void)
 {
-
 	initStatusLine();
 	displayCPUutil();
 	execStatusLine();
-
 }
 
 #ifdef useBenchMark
@@ -7498,52 +7490,45 @@ const uint8_t prgmBenchMarkTime[] PROGMEM = {
 
 void doBenchMark(void)
 {
-
 	unsigned long t = 0;
-	unsigned long w;
-	unsigned long s;
-	unsigned long e;
+	unsigned long w, s, e, c;
 
-	unsigned long c;
+	/* disable interrupts */
+	cli();
 
-	cli(); // disable interrupts
+	/* wait for timer2 to overflow */
+	while (!(TIFR2 & (1 << TOV2)));
 
-	while (!(TIFR2 & (1 << TOV2))); // wait for timer2 to overflow
-	TIFR2 |= (1 << TOV2); // reset timer2 overflow flag
+	/* reset timer2 overflow flag */
+	TIFR2 |= (1 << TOV2);
 
 #ifdef TinkerkitLCDmodule
-	s = TCNT0; // do a microSeconds() - like read to determine loop length in cycles
+	/* do a microSeconds() - like read to determine loop length in cycles */
+	s = TCNT0;
 #else
-	s = TCNT2; // do a microSeconds() - like read to determine loop length in cycles
+	/* do a microSeconds() - like read to determine loop length in cycles */
+	s = TCNT2;
 #endif
-
 	for (unsigned int x = 0; x < 1000; x++)
 	{
-
 		if (TIFR2 & (1 << TOV2))
 		{
-
 			t += 256ul;
 			TIFR2 |= (1 << TOV2);
-
 		}
 
 		c = (unsigned long)iSqrt((unsigned int)(s));
-//		readMAP();
-//		c = s * pressure[(unsigned int)(injCorrectionIdx)];
-//		c >>= 12;
-
 	}
-
 #ifdef TinkerkitLCDmodule
-	e = TCNT0; // do a microSeconds() - like read to determine loop length in cycles
+	/* do a microSeconds() - like read to determine loop length in cycles */
+	e = TCNT0;
 	if (TIFR0 & (1 << TOV0))
 #else
-	e = TCNT2; // do a microSeconds() - like read to determine loop length in cycles
+	/* do a microSeconds() - like read to determine loop length in cycles */
+	e = TCNT2;
 	if (TIFR2 & (1 << TOV2))
 #endif
 	{
-
 #ifdef TinkerkitLCDmodule
 		e = TCNT0;
 		TIFR0 |= (1 << TOV0);
@@ -7552,7 +7537,6 @@ void doBenchMark(void)
 		TIFR2 |= (1 << TOV2);
 #endif
 		t += 256;
-
 	}
 
 	e += t;
@@ -7567,18 +7551,21 @@ void doBenchMark(void)
 	print(format(SWEET64(prgmBenchMarkTime, 0), 3));
 	printFlash(PSTR(" usec"));
 	execStatusLine();
-
 }
+#endif
+#endif
 
-#endif
-#endif
 #ifdef useEEPROMviewer
 void doEEPROMviewDisplay(void)
 {
-	print(format64(prgmFormatToNumber, (unsigned long)(screenCursor[(unsigned int)(eepromViewIdx)]), mBuff1, 3));
+	print(format64(prgmFormatToNumber,
+	    (unsigned long)(screenCursor[(unsigned int)(eepromViewIdx)]),
+	    mBuff1, 3));
 	clrEOL();
 	gotoXY(0, 1);
-	print(format64(prgmFormatToNumber, eepromReadVal((unsigned int)(screenCursor[(unsigned int)(eepromViewIdx)])), mBuff1, 3));
+	print(format64(prgmFormatToNumber,
+	    eepromReadVal((unsigned int)(screenCursor[eepromViewIdx])),
+	    mBuff1, 3));
 	clrEOL();
 }
 
@@ -7587,23 +7574,26 @@ void goEEPROMview(void)
 	prevMenuLevel = menuLevel;
 	doCursorMoveAbsolute(eepromViewIdx, 255);
 }
-
 #endif
-#ifdef useSavedTrips // Trip save/restore/raw data view support section
+
+/* Trip save/restore/raw data view support section */
+#ifdef useSavedTrips
 void doCursorUpdateTripShow(void)
 {
-	paramPtr = (uint8_t)(getBaseTripPointer(tripShowSlot)) + screenCursor[(unsigned int)(tripShowScreenIdx)];
+	paramPtr = (uint8_t)(getBaseTripPointer(tripShowSlot)) +
+	    screenCursor[tripShowScreenIdx];
 	doParamRevert();
 }
 
 void doTripSaveDisplay(void)
 {
 	unsigned int t = getBaseTripPointer(tripShowSlot);
-	uint8_t b = (uint8_t)(eepromReadVal((unsigned int)(t + tripListSigPointer)));
-	uint8_t i = screenCursor[(unsigned int)(tripSaveScreenIdx)];
+	uint8_t b = (uint8_t)(eepromReadVal(
+	    (unsigned int)(t + tripListSigPointer)));
+	uint8_t i = screenCursor[tripSaveScreenIdx];
 	uint8_t j;
 
-	if (i == tslCount) 
+	if (i == tslCount)
 	{
 		j = tslSubSize;
 	}
@@ -7613,14 +7603,16 @@ void doTripSaveDisplay(void)
 		i /= tslSubSize;
 		j -= i * tslSubSize;
 
-		i = pgm_read_byte(&tripSelectList[(unsigned int)(i)]);
+		i = pgm_read_byte(&tripSelectList[i]);
 	}
 
-	printStr(tripNames, j); // print trip function name at top left
+	/* print trip function name at top left */
+	printStr(tripNames, j);
 	if (j < tslSubSize)
 		printStr(bigFEDispChars, i);
 	clrEOL();
-	gotoXY(0, 1); // go to next line
+	/* go to next line */
+	gotoXY(0, 1);
 
 	charOut('0' + tripShowSlot);
 	charOut(':');
@@ -7638,7 +7630,7 @@ void doTripShowDisplay(void)
 	charOut('0' + tripShowSlot);
 	charOut(':');
 
-	uint8_t b = screenCursor[(unsigned int)(tripShowScreenIdx)];
+	uint8_t b = screenCursor[tripShowScreenIdx];
 
 	if (b > 16)
 		b -= 1;
@@ -7648,10 +7640,11 @@ void doTripShowDisplay(void)
 	printStr(ertvNames, b);
 
 	charOut(' ');
-	charOut(76 - 4 * (screenCursor[(unsigned int)(tripShowScreenIdx)] & 1));
+	charOut(76 - 4 * (screenCursor[tripShowScreenIdx] & 1));
 
 	clrEOL();
-	gotoXY(0, 1); // go to next line
+	/* go to next line */
+	gotoXY(0, 1);
 	print(pBuff);
 	clrEOL();
 }
@@ -7700,11 +7693,12 @@ void goTripSelect(uint8_t pressFlag)
 
 		if ((j == 0) && (pressFlag == 0))
 		{
-			doCursorMoveAbsolute(prevMenuLevel, i + tripScreenIdxBase);
+			doCursorMoveAbsolute(prevMenuLevel,
+			    i + tripScreenIdxBase);
 		}
 		else
 		{
-			i = pgm_read_byte(&tripSelectList[(unsigned int)(i)]);
+			i = pgm_read_byte(&tripSelectList[i]);
 
 			if ((j == 1) && (pressFlag == 1))
 				doTripSave(i);
@@ -7720,14 +7714,14 @@ void goTripSelect(uint8_t pressFlag)
 
 void doTripSave(uint8_t tripIdx)
 {
-	tripArray[(unsigned int)(tripIdx)].save(tripShowSlot);
+	tripArray[tripIdx].save(tripShowSlot);
 	doTripPrintType(tripIdx);
 	printFlash(PSTR(" Save"));
 }
 
 void doTripLoad(uint8_t tripIdx)
 {
-	tripArray[(unsigned int)(tripIdx)].load(tripShowSlot);
+	tripArray[tripIdx].load(tripShowSlot);
 	doMainScreenDisplay();
 	gotoXY(0, 0);
 	doTripPrintType(tripIdx);
@@ -7746,19 +7740,20 @@ const uint8_t autoSaveInstr[] PROGMEM = {
 
 uint8_t doTripAutoAction(uint8_t taaMode)
 {
-	uint8_t b;
+	uint8_t b, x;
 	uint8_t c = 0;
 
-	for (uint8_t x = 0; x < tslSize; x++)
+	for (x = 0; x < tslSize; x++)
 	{
-		if (eepromReadVal((unsigned int)(pgm_read_byte(&autoSaveInstr[(unsigned int)(x)]))))
+		if (eepromReadVal((unsigned int)(pgm_read_byte(
+		    &autoSaveInstr[x]))))
 		{
-			b = pgm_read_byte(&tripSelectList[(unsigned int)(x)]);
+			b = pgm_read_byte(&tripSelectList[x]);
 
 			if (taaMode)
-				c += tripArray[(unsigned int)(b)].load(x);
+				c += tripArray[b].load(x);
 			else
-				c += tripArray[(unsigned int)(b)].save(x);
+				c += tripArray[b].save(x);
 		}
 	}
 
@@ -7767,7 +7762,7 @@ uint8_t doTripAutoAction(uint8_t taaMode)
 
 void doTripReset(uint8_t tripIdx)
 {
-	tripArray[(unsigned int)tripIdx].reset();
+	tripArray[tripIdx].reset();
 	doTripPrintType(tripIdx);
 	printFlash(PSTR(" Reset"));
 }
@@ -7790,37 +7785,36 @@ void doTripShowCancel(void)
 {
 	menuLevel = tripSaveScreenIdx;
 }
-
 #endif
-#ifdef useScreenEditor // Programmable main display screen edit support section
+
+/* Programmable main display screen edit support section */
+#ifdef useScreenEditor
 
 uint8_t screenEditValue = 0;
 
 void doCursorUpdateScreenEdit(void)
 {
-	uint8_t b = screenCursor[(unsigned int)(screenEditIdx)] >> 1;
+	uint8_t b = screenCursor[screenEditIdx] >> 1;
 
-	screenEditValue = displayFormats[(unsigned int)(b)] & dfValMask;
-	paramLength = (displayFormats[(unsigned int)(b)] & dfTripMask) >> dfBitShift;
+	screenEditValue = displayFormats[b] & dfValMask;
+	paramLength = (displayFormats[b] & dfTripMask) >> dfBitShift;
 }
 
 void doScreenEditDisplay(void)
 {
-	uint8_t i = screenCursor[(unsigned int)(screenEditIdx)];
+	uint8_t i = screenCursor[screenEditIdx];
 	uint8_t j = i;
 	i >>= 1;
 	uint8_t k = i;
-	uint8_t l;
-	uint8_t m;
-	uint8_t n;
+	uint8_t l, m, n, x;
 
 	i &= 0xFC;
 	j &= 0x01;
 	k &= 0x03;
 
-	for (uint8_t x = 0; x < 4; x++)
+	for (x = 0; x < 4; x++)
 	{
-		l = displayFormats[(unsigned int)(i++)];
+		l = displayFormats[i++];
 		m = 0;
 		n = 0;
 
@@ -7839,7 +7833,8 @@ void doScreenEditDisplay(void)
 void doGoScreenEdit(void)
 {
 	prevMenuLevel = menuLevel;
-	doCursorMoveAbsolute(screenEditIdx, screenCursor[(unsigned int)(mainScreenIdx)] * displayPageCount);
+	doCursorMoveAbsolute(screenEditIdx, screenCursor[mainScreenIdx] *
+	    displayPageCount);
 }
 
 void doScreenEditReturnToMain(void)
@@ -7850,15 +7845,16 @@ void doScreenEditReturnToMain(void)
 
 void doScreenEditRevert(void)
 {
-	uint8_t b = screenCursor[(unsigned int)(screenEditIdx)] >> 1;
+	uint8_t b = screenCursor[screenEditIdx] >> 1;
 
 	paramPtr = (uint8_t)(eePtrScreensStart) + b;
-	displayFormats[(unsigned int)(b)] = (uint8_t)(eepromReadVal((unsigned int)(paramPtr)));
+	displayFormats[b] =
+	    (uint8_t)(eepromReadVal((unsigned int)(paramPtr)));
 }
 
 void doScreenEditBump(void)
 {
-	uint8_t b = screenCursor[(unsigned int)(screenEditIdx)];
+	uint8_t b = screenCursor[screenEditIdx];
 	uint8_t c = b;
 	b &= 0x01;
 	c >>= 1;
@@ -7876,15 +7872,16 @@ void doScreenEditBump(void)
 			paramLength = 0;
 	}
 
-	displayFormats[(unsigned int)(c)] = (paramLength << dfBitShift) | screenEditValue;
+	displayFormats[c] =
+	    (paramLength << dfBitShift) | screenEditValue;
 }
 
 void doSaveScreen(void)
 {
-	uint8_t b = screenCursor[(unsigned int)(screenEditIdx)] >> 1;
+	uint8_t b = screenCursor[screenEditIdx] >> 1;
 
 	paramPtr = (uint8_t)(eePtrScreensStart) + b;
-	eepromWriteVal((unsigned int)(paramPtr), displayFormats[(unsigned int)(b)]);
+	eepromWriteVal((unsigned int)(paramPtr), displayFormats[b]);
 }
 
 #endif
@@ -7902,20 +7899,25 @@ uint8_t loadParams(void)
 	{
 		b = 0;
 
-		eepromWriteVal((unsigned int)(eePtrSignature), newEEPROMsignature);
+		eepromWriteVal((unsigned int)(eePtrSignature),
+		    newEEPROMsignature);
 
 		t = eePtrSettingsStart;
 		for (uint8_t x = 0; x < settingsSize; x++)
-			eepromWriteVal((unsigned int)(t++), pgm_read_dword(&params[(unsigned int)(x)]));
+			eepromWriteVal((unsigned int)(t++),
+			    pgm_read_dword(&params[x]));
 #ifdef useScreenEditor
 		t = eePtrScreensStart;
 		for (uint8_t x = 0; x < displayFormatSize; x++)
-			eepromWriteVal((unsigned int)(t++), (unsigned long)(displayFormats[(unsigned int)(x)]));
+			eepromWriteVal((unsigned int)(t++),
+			    (unsigned long)(displayFormats[x]));
 	}
 	else
 	{
 		t = eePtrScreensStart;
-		for (uint8_t x = 0; x < displayFormatSize; x++) displayFormats[(unsigned int)(x)] = (uint8_t)(eepromReadVal((unsigned int)(t++)));
+		for (uint8_t x = 0; x < displayFormatSize; x++)
+			displayFormats[x] =
+			    (uint8_t)(eepromReadVal((unsigned int)(t++)));
 #endif
 	}
 
@@ -7953,7 +7955,6 @@ uint8_t eepromWriteVal(unsigned int eePtr, unsigned long val)
 unsigned long eepromReadVal(unsigned int eePtr)
 {
 	unsigned int t = eepromGetAddress(eePtr);
-
 	uint8_t l;
 	unsigned long val = 0;
 
@@ -7998,13 +7999,15 @@ unsigned int eepromGetAddress(unsigned int eePtr)
 #endif
 #ifdef useSavedTrips
 	}
-	else if ((eePtr >= eePtrSavedTripsStart) && (eePtr < eePtrSavedTripsEnd))
+	else if ((eePtr >= eePtrSavedTripsStart) &&
+	    (eePtr < eePtrSavedTripsEnd))
 	{
 		eePtr -= eePtrSavedTripsStart;
 		l = (uint8_t)(eePtr / tripListSize);
 		eePtr -= (unsigned int)(l) * (unsigned int)(tripListSize);
 
-		t = eeAdrSavedTripsStart + (unsigned int)(l) * (unsigned int)(eepromTripListSize);
+		t = eeAdrSavedTripsStart + (unsigned int)(l) *
+		    (unsigned int)(eepromTripListSize);
 
 		if ((eePtr > 0) && (eePtr < tripListSigPointer))
 		{
@@ -8014,7 +8017,8 @@ unsigned int eepromGetAddress(unsigned int eePtr)
 		}
 		else
 		{
-			if (eePtr > 0) t += (unsigned int)(eepromTripListSize - 1);
+			if (eePtr > 0)
+				t += (unsigned int)(eepromTripListSize - 1);
 			l = 1;
 		}
 #endif
@@ -8034,7 +8038,9 @@ unsigned int eepromGetAddress(unsigned int eePtr)
 
 void callFuncPointer(const uint8_t * funcIdx)
 {
-	pFunc mainFunc = (pFunc)pgm_read_word(&funcPointers[(unsigned int)(pgm_read_byte(funcIdx))]); // go perform action
+	/* go perform action */
+	pFunc mainFunc = (pFunc)pgm_read_word(
+	    &funcPointers[pgm_read_byte(funcIdx)]);
 	mainFunc();
 }
 
@@ -8042,19 +8048,26 @@ unsigned long cycles2(void)
 {
 	unsigned long t;
 
-	uint8_t oldSREG = SREG; // save state of interrupt flag
+	/* save state of interrupt flag */
+	uint8_t oldSREG = SREG;
 
-	cli(); // disable interrupts
+	/* disable interrupts */
+	cli();
 #ifdef TinkerkitLCDmodule
-	t = timer2_overflow_count + TCNT0; // do a microSeconds() - like read to determine loop length in cycles
+	/* do a microSeconds() - like read to determine loop length in cycles */
+	t = timer2_overflow_count + TCNT0;
+	/* if overflow occurred, reread with overflow flag taken into account */
 	if (TIFR0 & (1 << TOV0))
-		t = timer2_overflow_count + 256 + TCNT0; // if overflow occurred, re-read with overflow flag taken into account
+		t = timer2_overflow_count + 256 + TCNT0;
 #else
-	t = timer2_overflow_count + TCNT2; // do a microSeconds() - like read to determine loop length in cycles
+	/* do a microSeconds() - like read to determine loop length in cycles */
+	t = timer2_overflow_count + TCNT2;
+	/* if overflow occurred, reread with overflow flag taken into account */
 	if (TIFR2 & (1 << TOV2))
-		t = timer2_overflow_count + 256 + TCNT2; // if overflow occurred, re-read with overflow flag taken into account
+		t = timer2_overflow_count + 256 + TCNT2;
 #endif
-	SREG = oldSREG; // restore state of interrupt flag
+	/* restore state of interrupt flag */
+	SREG = oldSREG;
 
 	return t;
 }
@@ -8078,51 +8091,82 @@ int main(void)
 
 	const uint8_t * bpPtr;
 
-	cli(); // disable interrupts while interrupts are being fiddled with
+	/* disable interrupts while interrupts are being fiddled with */
+	cli();
 
 #ifdef TinkerkitLCDmodule
-	TCCR0A &= ~((1 << COM0A1) | (1 << COM0A0) | (1 << COM0B1) | (1 << COM0B0)); // put timer 0 in 8-bit fast pwm mode
+	/* put timer 0 in 8-bit fast pwm mode */
+	TCCR0A &= ~((1 << COM0A1) | (1 << COM0A0) | (1 << COM0B1) |
+	    (1 << COM0B0));
 	TCCR0A |= ((1 << WGM01) | (1 << WGM00));
-	TCCR0B &= ~((1 << FOC0A) | (1 << FOC0B) | (1 << WGM02) | (1 << CS02)); // set timer 0 prescale factor to 64
+	/* set timer 0 prescale factor to 64 */
+	TCCR0B &= ~((1 << FOC0A) | (1 << FOC0B) | (1 << WGM02) | (1 << CS02));
 	TCCR0B |= ((1 << CS01) | (1 << CS00));
-	TIMSK0 &= ~((1 << OCIE0B) | (1 << OCIE0A)); // disable timer 0 output compare interrupts
-	TIMSK0 |= (1 << TOIE0); // enable timer 0 overflow interrupt
-	TIFR0 |= ((1 << OCF0B) | (1 << OCF0A) | (1 << TOV0)); // clear timer 0 interrupt flags
+	/* disable timer 0 output compare interrupts */
+	TIMSK0 &= ~((1 << OCIE0B) | (1 << OCIE0A));
+	/* enable timer 0 overflow interrupt */
+	TIMSK0 |= (1 << TOIE0);
+	/* clear timer 0 interrupt flags */
+	TIFR0 |= ((1 << OCF0B) | (1 << OCF0A) | (1 << TOV0));
 #else
-	TCCR2A &= ~((1 << COM2A1) | (1 << COM2A0) | (1 << COM2B1) | (1 << COM2B0)); // put timer 2 in 8-bit fast pwm mode
+	/* put timer 2 in 8-bit fast pwm mode */
+	TCCR2A &= ~((1 << COM2A1) | (1 << COM2A0) | (1 << COM2B1) |
+	    (1 << COM2B0));
 	TCCR2A |= ((1 << WGM21) | (1 << WGM20));
-	TCCR2B &= ~((1 << FOC2A) | (1 << FOC2B) | (1 << WGM22) | (1 << CS21) | (1 << CS20)); // set timer 2 prescale factor to 64
+	/* set timer 2 prescale factor to 64 */
+	TCCR2B &= ~((1 << FOC2A) | (1 << FOC2B) | (1 << WGM22) | (1 << CS21) |
+	    (1 << CS20));
 	TCCR2B |= (1 << CS22);
-	TIMSK2 &= ~((1 << OCIE2B) | (1 << OCIE2A)); // disable timer 2 output compare interrupts
-	TIMSK2 |= (1 << TOIE2); // enable timer 2 overflow interrupt
-	TIFR2 |= ((1 << OCF2B) | (1 << OCF2A) | (1 << TOV2)); // clear timer 2 interrupt flags
+	/* disable timer 2 output compare interrupts */
+	TIMSK2 &= ~((1 << OCIE2B) | (1 << OCIE2A));
+	/* enable timer 2 overflow interrupt */
+	TIMSK2 |= (1 << TOIE2);
+	/* clear timer 2 interrupt flags */
+	TIFR2 |= ((1 << OCF2B) | (1 << OCF2A) | (1 << TOV2));
 #endif
 
 #ifdef useAnalogInterrupt
 #ifndef useAnalogRead
-	ADMUX = (1 << REFS0); // set ADC voltage reference to AVCC, and right-adjust the ADC reading
+	/*
+	 * set ADC voltage reference to AVCC, and right-adjust the ADC reading
+	 */
+	ADMUX = (1 << REFS0);
 #endif
-	// enable ADC, enable ADC interrupt, clear any pending ADC interrupt, and set frequency to 1/128 of system timer
-	ADCSRA = ((1 << ADEN) | (1 << ADSC) | (1 << ADATE) | (1 << ADIF) | (1 << ADIE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0));
-	ADCSRB = 0; // disable analog comparator multiplexer, and set ADC auto trigger source to free-running mode
+	/*
+	 * enable ADC, enable ADC interrupt, clear any pending ADC interrupt,
+	 * and set frequency to 1/128 of system timer
+	 */
+	ADCSRA = ((1 << ADEN) | (1 << ADSC) | (1 << ADATE) | (1 << ADIF) |
+	    (1 << ADIE) | (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0));
+	/*
+	 * disable analog comparator multiplexer, and set ADC auto trigger
+	 * source to free-running mode
+	 */
+	ADCSRB = 0;
 #ifdef useLegacyButtons
-	DIDR0 = ((1 << ADC2D) | (1 << ADC1D)); // only enable digital input on VSS and button pins
+	/* only enable digital input on VSS and button pins */
+	DIDR0 = ((1 << ADC2D) | (1 << ADC1D));
 #else
 #ifdef TinkerkitLCDmodule
 	DIDR0 = ((1 << ADC7D) | (1 << ADC6D) | (1 << ADC5D));
 	DIDR2 = (1 << ADC10D);
 #else
-	DIDR0 = ((1 << ADC5D) | (1 << ADC4D) | (1 << ADC3D) | (1 << ADC2D) | (1 << ADC1D)); // only enable digital input on VSS pin
+	/* only enable digital input on VSS pin */
+	DIDR0 = ((1 << ADC5D) | (1 << ADC4D) | (1 << ADC3D) | (1 << ADC2D) |
+	    (1 << ADC1D));
 #endif
 #endif
 #endif
 
 #ifdef useSerialPort
-	UBRR0H = (uint8_t)(myubbr >> 8); // set serial uart baud rate
+	/* set serial uart baud rate */
+	UBRR0H = (uint8_t)(myubbr >> 8);
 	UBRR0L = (uint8_t)(myubbr);
 	UCSR0A &= ~(1 << U2X0);
-	UCSR0B = 0; // disable serial uart pins
-	UCSR0C = (1 << UCSZ01)| (1 << UCSZ00); // set for 8 data bits, no parity, and 1 stop bit
+	/* disable serial uart pins */
+	UCSR0B = 0;
+	/* set for 8 data bits, no parity, and 1 stop bit */
+	UCSR0C = (1 << UCSZ01)| (1 << UCSZ00);
 #ifdef useBufferedSerialPort
 	serialBuffer.init();
 	serialBuffer.process = serialTransmitByte;
@@ -8130,51 +8174,78 @@ int main(void)
 	serialBuffer.onNoLongerEmpty = serialTransmitEnable;
 #endif
 #endif
-
-	timer2_overflow_count = 0; // initialize timer 2 overflow counter
+	/* initialize timer 2 overflow counter */
+	timer2_overflow_count = 0;
 
 #ifdef useLegacyButtons
 #ifdef ArduinoMega2560
-	PORTK |= ((1 << PORTK5) | (1 << PORTK4) | (1 << PORTK3)); // enable port K button pullup resistors
-	PCMSK2 |= ((1 << PCINT21) | (1 << PCINT20) | (1 << PCINT19) | (1 << PCINT16)); // enable port K button and VSS pin interrupts
+	/* enable port K button pullup resistors */
+	PORTK |= ((1 << PORTK5) | (1 << PORTK4) | (1 << PORTK3));
+	/* enable port K button and VSS pin interrupts */
+	PCMSK2 |= ((1 << PCINT21) | (1 << PCINT20) | (1 << PCINT19) |
+	    (1 << PCINT16));
 #else
-	PORTC |= ((1 << PORTC5) | (1 << PORTC4) | (1 << PORTC3)); // enable port C button pullup resistors
-	PCMSK1 |= ((1 << PCINT13) | (1 << PCINT12) | (1 << PCINT11) | (1 << PCINT8)); // enable port C button and VSS pin interrupts
+	/* enable port C button pullup resistors */
+	PORTC |= ((1 << PORTC5) | (1 << PORTC4) | (1 << PORTC3));
+	/* enable port C button and VSS pin interrupts */
+	PCMSK1 |= ((1 << PCINT13) | (1 << PCINT12) | (1 << PCINT11) |
+	    (1 << PCINT8));
 #endif
 #else
 #ifdef ArduinoMega2560
-	PCMSK2 |= (1 << PCINT16); // enable port K VSS pin interrupt
+	/* enable port K VSS pin interrupt */
+	PCMSK2 |= (1 << PCINT16);
 #else
 #ifdef TinkerkitLCDmodule
-	PCMSK0 |= (1 << PCINT1); // enable port B VSS pin interrupt
+	/* enable port B VSS pin interrupt */
+	PCMSK0 |= (1 << PCINT1);
 #else
-	PCMSK1 |= (1 << PCINT8); // enable port C VSS pin interrupt
+	/* enable port C VSS pin interrupt */
+	PCMSK1 |= (1 << PCINT8);
 #endif
 #endif
 #endif
 #ifdef ArduinoMega2560
-	PCICR |= (1 << PCIE2); // enable selected interrupts on port K
+	/* enable selected interrupts on port K */
+	PCICR |= (1 << PCIE2);
 #else
 #ifdef TinkerkitLCDmodule
-	PCICR |= (1 << PCIE0); // enable selected interrupts on port ?
+	/* enable selected interrupts on port ? */
+	PCICR |= (1 << PCIE0);
 #else
-	PCICR |= (1 << PCIE1); // enable selected interrupts on port C
+	/* enable selected interrupts on port C */
+	PCICR |= (1 << PCIE1);
 #endif
 #endif
 
 #ifdef ArduinoMega2560
-	lastPINKstate = PINK; // initialize last PINK state value so as to not erroneously detect a keypress on start
+	/*
+	 * initialize last PINK state value so as to not erroneously detect a
+	 * keypress on start
+	 */
+	lastPINKstate = PINK;
 #else
 #ifdef TinkerkitLCDmodule
-	lastPINBstate = PINB; // initialize last PINB state value so as to not erroneously detect a keypress on start
+	/*
+	 * initialize last PINB state value so as to not erroneously detect a
+	 * keypress on start
+	 */
+	lastPINBstate = PINB;
 #else
-	lastPINCstate = PINC; // initialize last PINC state value so as to not erroneously detect a keypress on start
+	/*
+	 * initialize last PINC state value so as to not erroneously detect a
+	 * keypress on start
+	 */
+	lastPINCstate = PINC;
 #endif
 #endif
 
-	for (uint8_t x = 0; x < tUDcount; x++) tripArray[(unsigned int)(pgm_read_byte(&tripUpdateDestList[(unsigned int)(x)]) & 0x7F)].reset();
+	for (uint8_t x = 0; x < tUDcount; x++)
+		tripArray[pgm_read_byte(&tripUpdateDestList[x]) & 0x7F].reset();
 
-	if (loadParams() != 1) doGoSettingsEdit(); // go through the initialization screen
+	/* go through the initialization screen */
+	if (loadParams() != 1)
+		doGoSettingsEdit();
 
 #ifdef useAnalogRead
 	timerCommand = tcWakeUp | tcResetADC;
@@ -8197,191 +8268,248 @@ int main(void)
 	gotoXY(0, 1);
 	printFlash(PSTR("2014-MAY-12     "));
 
-	delay2(delay1500ms); // show splash screen for 1.5 seconds
+	/* show splash screen for 1.5 seconds */
+	delay2(delay1500ms);
 
 #ifdef useSavedTrips
-	if (doTripAutoAction(1)) printStatusMessage(PSTR("AutoRestore Done"));
+	if (doTripAutoAction(1))
+		printStatusMessage(PSTR("AutoRestore Done"));
 #endif
-
 	while (true)
 	{
-
-		if (!(timerStatus & tsLoopExec)) // if not currently executing a cycle
+		/* if not currently executing a cycle */
+		if (!(timerStatus & tsLoopExec))
 		{
-
-			timerCommand |= tcStartLoop; // start a new cycle
+			/* start a new cycle */
+			timerCommand |= tcStartLoop;
 			while (timerCommand & tcStartLoop);
 
 			timerLoopStart = cycles2();
-
 #ifdef useClock
-			cli(); // perform atomic transfer of clock to main program
+			/* perform atomic transfer of clock to main program */
+			cli();
 
-			copy64((union union_64 *)&outputCycles, (union union_64 *)&clockCycles); // perform atomic transfer of system time to main program
+			/*
+			 * perform atomic transfer of system time to main
+			 * program
+			 */
+			copy64((union union_64 *)&outputCycles,
+			    (union union_64 *)&clockCycles);
 
 			sei();
 #endif
-
 			if (timerStatus & tsAwake)
 			{
-
 				if (timerStatus & tsFellAsleep)
 				{
-
-					LCD::setBright(brightnessIdx); // restore backlight brightness setting
-					if (eepromReadVal((unsigned int)(pWakupResetCurrentIdx))) doTripResetCurrent();
+					/*
+					 * restore backlight brightness setting
+					 */
+					LCD::setBright(brightnessIdx);
+					if (eepromReadVal(pWakupResetCurrentIdx))
+						doTripResetCurrent();
 					timerStatus &= ~tsFellAsleep;
-
 				}
-
 #ifdef useDebugReadings
-				tripArray[(unsigned int)(rawIdx)].collectedData[(unsigned int)(rvInjCycleIdx)] = (t2CyclesPerSecond / loopsPerSecond);
-				tripArray[(unsigned int)(rawIdx)].collectedData[(unsigned int)(rvInjOpenCycleIdx)] = ((16391ul * processorSpeed) / (loopsPerSecond * 10));
-				tripArray[(unsigned int)(rawIdx)].collectedData[(unsigned int)(rvVSScycleIdx)] = (t2CyclesPerSecond / loopsPerSecond);
-				tripArray[(unsigned int)(rawIdx)].collectedData[(unsigned int)(rvInjPulseIdx)] = (20ul / loopsPerSecond);
-				tripArray[(unsigned int)(rawIdx)].collectedData[(unsigned int)(rvVSSpulseIdx)] = (208ul / loopsPerSecond);
+				tripArray[rawIdx].collectedData[rvInjCycleIdx] =
+				    (t2CyclesPerSecond / loopsPerSecond);
+				tripArray[rawIdx].
+				    collectedData[rvInjOpenCycleIdx] =
+				    ((16391ul * processorSpeed) /
+				     (loopsPerSecond * 10));
+				tripArray[rawIdx].collectedData[rvVSScycleIdx] =
+				    (t2CyclesPerSecond / loopsPerSecond);
+				tripArray[rawIdx].collectedData[rvInjPulseIdx] =
+				    (20ul / loopsPerSecond);
+				tripArray[rawIdx].collectedData[rvVSSpulseIdx] =
+				    (208ul / loopsPerSecond);
 
-				timerCommand |= tcWakeUp; // tell system timer to wake up the main program
+				/*
+				 * tell system timer to wake up the main program
+				 */
+				timerCommand |= tcWakeUp;
 #endif
 #ifdef useBarFuelEconVsTime
 				bFEvTcount++;
 
 				if (bFEvTcount >= bFEvTperiod)
 				{
+					if (bFEvTsize < bgDataSize)
+						bFEvTsize++;
 
-					if (bFEvTsize < bgDataSize) bFEvTsize++;
-
-					barFEvsTimeData[(unsigned int)(bFEvTstartIDx)] = SWEET64(prgmFuelEcon, periodIdx);
+					barFEvsTimeData[bFEvTstartIDx] =
+					    SWEET64(prgmFuelEcon, periodIdx);
 
 					bFEvTstartIDx++;
-					if (bFEvTstartIDx == bgDataSize) bFEvTstartIDx = 0;
+					if (bFEvTstartIDx == bgDataSize)
+						bFEvTstartIDx = 0;
 
-					tripArray[(unsigned int)(periodIdx)].reset();
+					tripArray[periodIdx].reset();
 					bFEvTcount = 0;
-
 				}
 #endif
-
 				for (uint8_t x = 0; x < tUScount; x++)
 				{
+					i = pgm_read_byte(
+					    &tripUpdateDestList[x]);
+					j = pgm_read_byte(
+					    &tripUpdateSrcList[x]);
 
-					i = pgm_read_byte(&tripUpdateDestList[(unsigned int)x]);
-					j = pgm_read_byte(&tripUpdateSrcList[(unsigned int)x]);
-
-					if (j & 0x80) cli(); // perform atomic transfer of raw measurements to main program
+					/*
+					 * perform atomic transfer of raw
+					 * measurements to main program
+					 */
+					if (j & 0x80)
+						cli();
 
 					if (i & 0x80)
 					{
-
-						tripArray[(unsigned int)(i & 0x7F)].transfer(tripArray[(unsigned int)(j & 0x7F)]);
-						tripArray[(unsigned int)(j & 0x7F)].reset();
-
+						tripArray[(i & 0x7F)].transfer(
+						    tripArray[(j & 0x7F)]);
+						tripArray[(j & 0x7F)].reset();
 					}
-					else tripArray[(unsigned int)(i & 0x7F)].update(tripArray[(unsigned int)(j & 0x7F)]);
+					else
+					{
+						tripArray[(i & 0x7F)].update(
+						    tripArray[(j & 0x7F)]);
+					}
 
-					if (j & 0x80) sei();
-
+					if (j & 0x80)
+						sei();
 				}
 
 #ifdef useBarFuelEconVsSpeed
-				FEvSpdTripIdx = (uint8_t)(SWEET64(prgmFEvsSpeed, instantIdx));
-				if (FEvSpdTripIdx < 255) tripArray[(unsigned int)(FEvSpdTripIdx)].update(tripArray[(unsigned int)(instantIdx)]);
-
+				FEvSpdTripIdx = (uint8_t)(SWEET64(prgmFEvsSpeed,
+				    instantIdx));
+				if (FEvSpdTripIdx < 255)
+					tripArray[FEvSpdTripIdx].update(
+					    tripArray[instantIdx]);
 #endif
 #ifdef useSerialPortDataLogging
-				if (eepromReadVal((unsigned int)(pSerialDataLoggingIdx))) doOutputDataLog();
-
+				if (eepromReadVal(pSerialDataLoggingIdx))
+					doOutputDataLog();
 #endif
 #ifdef useWindowFilter
-				if (eepromReadVal((unsigned int)(pWindowFilterIdx)))
+				if (eepromReadVal(pWindowFilterIdx))
 				{
 
-					if (tripArray[(unsigned int)(instantIdx)].collectedData[(unsigned int)(rvInjOpenCycleIdx)] == 0)
-
-						resetWindowFilter(); // if no fuel is being consumed, reset filter
-
+					/*
+					 * if no fuel is being consumed, reset
+					 * filter
+					 */
+					if (tripArray[instantIdx].collectedData[
+					    rvInjOpenCycleIdx] == 0)
+					{
+						resetWindowFilter();
+					}
+					/* update the CIC filter */
 					else
-					{ // update the CIC filter
+					{
+						if (windowFilterCount <
+						    windowFilterSize)
+							windowFilterCount++;
+						else
+							tripArray[
+							    windowFilterSumIdx].
+							    subtract(tripArray[
+							    windowFilterElemIdx+
+							    windowFilterIdx]);
 
-						if (windowFilterCount < windowFilterSize) windowFilterCount++;
-						else tripArray[(unsigned int)(windowFilterSumIdx)].subtract(tripArray[(unsigned int)(windowFilterElemIdx + windowFilterIdx)]);
-
-						tripArray[(unsigned int)(windowFilterSumIdx)].update(tripArray[(unsigned int)(instantIdx)]);
-						tripArray[(unsigned int)(windowFilterElemIdx + windowFilterIdx)].transfer(tripArray[(unsigned int)(instantIdx)]);
-						tripArray[(unsigned int)(instantIdx)].transfer(tripArray[(unsigned int)(windowFilterSumIdx)]);
+						tripArray[windowFilterSumIdx].
+						    update(tripArray[
+							instantIdx]);
+						tripArray[windowFilterElemIdx +
+						    windowFilterIdx].transfer(
+							tripArray[instantIdx]);
+						tripArray[instantIdx].
+						    transfer(tripArray[
+							windowFilterSumIdx]);
 
 						windowFilterIdx++;
-						if (windowFilterIdx == windowFilterSize) windowFilterIdx = 0;
-
+						if (windowFilterIdx ==
+						    windowFilterSize)
+							windowFilterIdx = 0;
 					}
-
 				}
-
 #endif
 			}
-
 		}
 
-		if (timerStatus & tsAwake) doRefreshDisplay();
+		if (timerStatus & tsAwake)
+		{
+			doRefreshDisplay();
+		}
 		else
 		{
-
 			if (!(timerStatus & tsFellAsleep))
 			{
-
 #ifdef useSavedTrips
-				if (doTripAutoAction(0)) printStatusMessage(PSTR("AutoSave Done"));
+				if (doTripAutoAction(0))
+					printStatusMessage(
+					    PSTR("AutoSave Done"));
 #endif
-				LCD::setBright(0); // set backlight brightness to zero
+				/* set backlight brightness to zero */
+				LCD::setBright(0);
 				timerStatus |= tsFellAsleep;
-
 			}
-
 #ifdef useClock
 			gotoXY(0, 0);
 			doDisplaySystemTime();
 #endif
-
 		}
 
-		if (timerStatus & tsMarkLoop) timerLoopLength = findCycleLength(timerLoopStart, cycles2());
+		if (timerStatus & tsMarkLoop)
+			timerLoopLength = findCycleLength(timerLoopStart,
+			    cycles2());
 		timerStatus &= ~tsMarkLoop;
 
-		// wait for cycle to end, or for a keypress
-		// while we're waiting anyway, let's do a few useful things
-		while ((timerStatus & tsLoopExec) && (timerStatus & tsButtonsUp));
+		/*
+		 * wait for cycle to end, or for a keypress
+		 * while we're waiting anyway, let's do a few useful things
+		 */
+		while ((timerStatus & tsLoopExec) &&
+		    (timerStatus & tsButtonsUp));
 
-		if (!(timerStatus & tsButtonsUp)) // see if any buttons were pressed, display a brief message if so
+		/*
+		 * see if any buttons were pressed, display a brief message
+		 * if so
+		 */
+		if (!(timerStatus & tsButtonsUp))
 		{
-
 			j = buttonState;
-			timerStatus |= tsButtonsUp; // reset keypress flag
+			/* reset keypress flag */
+			timerStatus |= tsButtonsUp;
 
-			if (j == btnShortPressR) doCursorMoveRelative(0, 1);
-			else if (j == btnShortPressL) doCursorMoveRelative(0, 255);
+			if (j == btnShortPressR)
+			{
+				doCursorMoveRelative(0, 1);
+			}
+			else if (j == btnShortPressL)
+			{
+				doCursorMoveRelative(0, 255);
+			}
 			else
 			{
-
-				bpPtr = (const uint8_t *)(pgm_read_word(&buttonPressAdrList[(unsigned int)(pgm_read_byte(&screenParameters[(unsigned int)(menuLevel)][5]))]));
+				bpPtr = (const uint8_t *)(pgm_read_word(
+				    &buttonPressAdrList[pgm_read_byte(
+				    &screenParameters[menuLevel][5])]));
 
 				while (true)
 				{
-
 					i = pgm_read_byte(bpPtr++);
 
-					if ((i == buttonsUp) || (j == i)) break;
+					if ((i == buttonsUp) || (j == i))
+						break;
 
 					bpPtr++;
-
 				}
 
 				gotoXY(0, 0);
-				if (j != buttonsUp) callFuncPointer(bpPtr); // go perform action
 
+				/* go perform action */
+				if (j != buttonsUp)
+					callFuncPointer(bpPtr);
 			}
-
 		}
-
 	}
-
 }
